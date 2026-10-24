@@ -56,6 +56,24 @@ public final class SamsungRemote {
     private volatile boolean connected;
     private boolean connecting;
     private long generation;
+    private String heldKey;
+
+    public synchronized boolean startHold(String key) {
+        if (!connected || (!"KEY_VOLUP".equals(key) && !"KEY_VOLDOWN".equals(key))) return false;
+        endHold(); heldKey = key; enqueue(key, "Press"); return true;
+    }
+
+    public synchronized void endHold() {
+        if (heldKey == null) return;
+        String key = heldKey; heldKey = null;
+        if (connected) enqueue(key, "Release");
+    }
+
+    private synchronized void enqueue(String key, String command) {
+        if (pending.size() >= 6) { disconnect(); return; }
+        pending.addLast(new PendingKey(key, command, SystemClock.elapsedRealtime()));
+        scheduleFlush();
+    }
 
     private SamsungRemote(Context context) {
         prefs = context.getApplicationContext().getSharedPreferences("bridge", Context.MODE_PRIVATE);
@@ -106,13 +124,17 @@ public final class SamsungRemote {
         if (!"KEY_VOLUP".equals(key) && !"KEY_VOLDOWN".equals(key) && !"KEY_MUTE".equals(key)) return;
         synchronized (this) {
             while (pending.size() >= 6) pending.removeFirst();
-            pending.addLast(new PendingKey(key, SystemClock.elapsedRealtime()));
+            pending.addLast(new PendingKey(key, "Click", SystemClock.elapsedRealtime()));
         }
         if (ready()) scheduleFlush();
         else connect();
     }
 
     public synchronized void disconnect() {
+        if (heldKey != null && connected) {
+            try { sendKey(socket, heldKey, "Release"); } catch (Exception ignored) { }
+        }
+        heldKey = null;
         generation++;
         connected = false;
         connecting = false;
@@ -305,12 +327,9 @@ public final class SamsungRemote {
                 next = pending.removeFirst();
                 target = socket;
             }
-            if (SystemClock.elapsedRealtime() - next.created > KEY_LIFETIME_MS) continue;
+            if ("Click".equals(next.command) && SystemClock.elapsedRealtime() - next.created > KEY_LIFETIME_MS) continue;
             try {
-                JSONObject params = new JSONObject().put("Cmd", "Click").put("DataOfCmd", next.key)
-                        .put("Option", "false").put("TypeOfRemote", "SendRemoteKey");
-                JSONObject json = new JSONObject().put("method", "ms.remote.control").put("params", params);
-                sendFrame(target, 1, json.toString().getBytes(StandardCharsets.UTF_8));
+                sendKey(target, next.key, next.command);
             } catch (Exception ignored) {
                 close(target);
                 synchronized (this) {
@@ -323,6 +342,13 @@ public final class SamsungRemote {
                 return;
             }
         }
+    }
+
+    private void sendKey(SSLSocket target, String key, String command) throws Exception {
+        JSONObject params = new JSONObject().put("Cmd", command).put("DataOfCmd", key)
+                .put("Option", "false").put("TypeOfRemote", "SendRemoteKey");
+        sendFrame(target, 1, new JSONObject().put("method", "ms.remote.control").put("params", params)
+                .toString().getBytes(StandardCharsets.UTF_8));
     }
 
     private void sendFrame(SSLSocket target, int opcode, byte[] payload) throws Exception {
@@ -383,7 +409,8 @@ public final class SamsungRemote {
     private static final class PendingKey {
         final String key;
         final long created;
-        PendingKey(String key, long created) { this.key = key; this.created = created; }
+        final String command;
+        PendingKey(String key, String command, long created) { this.key = key; this.command = command; this.created = created; }
     }
 
     @android.annotation.SuppressLint("CustomX509TrustManager")

@@ -14,6 +14,8 @@ final class VolumeRelay {
         if(!ConfigStore.prefs(context).getBoolean("enabled",false))return;
         VolumeTarget t=target();if(t!=null)t.key(key);
     }
+    synchronized boolean startHold(VolumeKey key) { VolumeTarget t=target(); return t!=null && t.startHold(key); }
+    synchronized void endHold() { if(target!=null)target.endHold(); }
     synchronized void disconnect(){if(target!=null)target.close();target=null;revision=Long.MIN_VALUE;}
     private VolumeTarget target() {
         long current=ConfigStore.prefs(context).getLong("config_revision",0);
@@ -26,6 +28,8 @@ final class VolumeRelay {
                 public void connect(){remote.connect();}public boolean ready(){return remote.ready();}
                 public String status(){return SamsungRemote.status();}
                 public void key(VolumeKey k){remote.key(k==VolumeKey.UP?"KEY_VOLUP":k==VolumeKey.DOWN?"KEY_VOLDOWN":"KEY_MUTE");}
+                public boolean startHold(VolumeKey k){return remote.startHold(k==VolumeKey.UP?"KEY_VOLUP":"KEY_VOLDOWN");}
+                public void endHold(){remote.endHold();}
                 public void close(){remote.disconnect();}
             };
         } else {

@@ -4,7 +4,7 @@ Use the **onn remote's volume buttons to control the TV's own volume** when the
 built-in remote setup fails. Independent Android app, multiple TV protocols,
 local network only, no cloud accounts, no root, and no launcher replacement.
 
-[FranÃ§ais](README.fr.md) Â· [Setup](docs/setup.md) Â· [Compatibility](docs/compatibility.md) Â· [Architecture](docs/architecture.md)
+[Français](README.fr.md) · [Setup](docs/setup.md) · [Compatibility](docs/compatibility.md) · [Architecture](docs/architecture.md)
 
 ## Why it exists
 
@@ -26,7 +26,7 @@ another approach; the project does not claim support for every TV.
 | Samsung Tizen | Paired TLS WebSocket, pinned TV certificate | Independent-app core volume, mute and held-button release confirmed with Samsung / TizenOS |
 | Roku TV | ECP volume up/down/mute; TV endpoint verification | Experimental; protocol and local-server tests only |
 | Sony BRAVIA | Audio JSON-RPC with optional PSK, relative speaker volume and mute | Experimental; protocol tests only |
-| UPnP RenderingControl | Explicit local endpoint, 0â€“100 volume and mute | Experimental; read capability alone does not establish write support |
+| UPnP RenderingControl | Explicit local endpoint, 0–100 volume and mute | Experimental; read capability alone does not establish write support |
 
 The independent app's core volume controls have now been checked with a real onn
 remote and a Samsung TV with TizenOS, including held buttons and release. The full
@@ -51,7 +51,7 @@ flowchart LR
     B --> U[UPnP endpoint]
 ```
 
-- Volume +/âˆ’ come from an authorized **loopback ADB** connection on the box.
+- Volume +/− come from an authorized **loopback ADB** connection on the box.
 - Mute is filtered by an accessibility service; it cannot read screen contents.
 - The input reader discovers the event node by interface name and capabilities.
   It prefers **Onn-Remote Keyboard**, the interface observed carrying volume;
@@ -88,7 +88,7 @@ Keep the box and TV on the same LAN and debugging enabled. No PC is needed durin
 normal use after setup. Reboot/reconnect behavior still needs verification per
 firmware; **Reconnect TV and button reader** retries a stopped connection.
 
-[Detailed setup and recovery](docs/setup.md) Â· [optional desktop configuration tool](tools/configure.py)
+[Detailed setup and recovery](docs/setup.md) · [optional desktop configuration tool](tools/configure.py)
 
 ## Privacy and permissions
 

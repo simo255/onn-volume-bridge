@@ -76,6 +76,10 @@ public final class LocalAdbVolumeKeys {
         }, () -> TimeUnit.NANOSECONDS.toMillis(System.nanoTime()),
             () -> ready && enabled() && prefs.getBoolean("raw_monitor_route_hdmi", true)
                 && VolumeRelay.get(this.context).ready(), this::emitVolume);
+        hold.setNativeHold(new VolumeHoldRepeater.NativeHold() {
+            public boolean start(VolumeKey key) { return VolumeRelay.get(LocalAdbVolumeKeys.this.context).startHold(key); }
+            public void stop() { VolumeRelay.get(LocalAdbVolumeKeys.this.context).endHold(); }
+        });
 
     }
 

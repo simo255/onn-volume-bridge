@@ -14,11 +14,11 @@
 | Component | Current evidence | Remaining verification |
 |---|---|---|
 | onn 4K Pro / Android TV 12, firmware SGZ3.231226.086.A1.12555768 | Independent app reads physical volume from Onn-Remote Keyboard and mute through accessibility | Full reboot/reconnect, playback/headphones, broader remote revisions |
-| Samsung / TizenOS | Original fix: physical +/âˆ’ and mute changed TV only; arrows/OK worked | Independent package setup and encrypted-token migration-free enrollment |
+| Samsung / TizenOS | Independent app: physical +/−, mute and native hold reported working; onn HDMI volume fixed | Full reboot, playback/headphones and network interruption acceptance |
 | Other Samsung Tizen TVs | Implemented pinned WSS remote protocol | Models, pairing, certificate lifetime, output routes |
 | Roku TV | API request tests plus actual loopback HTTP transport tests | Physical Roku TVs, Roku OS versions and local-control settings |
 | Sony BRAVIA Audio API | Relative speaker volume, PSK header, mute state and API-error tests | Real compatible models and PSK/IP-control settings |
-| UPnP RenderingControl | Get/SetVolume, clamp, Get/SetMute and write-failure tests | Explicit endpoint, 0â€“100 scale and writable audio control on real TVs |
+| UPnP RenderingControl | Get/SetVolume, clamp, Get/SetMute and write-failure tests | Explicit endpoint, 0–100 scale and writable audio control on real TVs |
 | LG webOS SSAP | Not implemented | Adapter, pairing, protocol tests and hardware |
 | IR-only TVs / arbitrary Android TVs / receivers | Not supported by default | A supported target API or another transport is necessary |
 
@@ -34,8 +34,8 @@ uses the Samsung WebSocket adapter instead.
 ## Acceptance checklist for community reports
 
 1. Record onn model, Android version, firmware, TV model/OS and app version.
-2. Confirm the app's +/âˆ’ and mute test buttons work on the actual TV.
-3. Confirm the physical onn +/âˆ’ change **only TV volume**, with the box level fixed.
+2. Confirm the app's +/− and mute test buttons work on the actual TV.
+3. Confirm the physical onn +/− change **only TV volume**, with the box level fixed.
 4. Confirm physical mute, arrows, OK, Back, Home and power retain their behavior.
 5. Check while another app is open and playing media.
 6. Restart the box and check reconnect without leaving a PC attached.

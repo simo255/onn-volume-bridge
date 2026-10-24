@@ -14,7 +14,7 @@
     <string name="accessibility">Enable accessibility service</string>
     <string name="remote_settings">Remote button settings</string>
     <string name="up">Volume +</string>
-    <string name="down">Volume Ã¢Ë†â€™</string>
+    <string name="down">Volume −</string>
     <string name="mute">Mute</string>
     <string name="paused">Relay paused</string>
     <string name="connected">TV and onn button reader connected</string>

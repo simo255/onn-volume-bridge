@@ -4,5 +4,7 @@ interface VolumeTarget {
     boolean ready();
     String status();
     void key(VolumeKey key);
+    default boolean startHold(VolumeKey key) { return false; }
+    default void endHold() { }
     void close();
 }
