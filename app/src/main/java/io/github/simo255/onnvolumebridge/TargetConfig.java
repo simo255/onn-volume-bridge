@@ -7,8 +7,8 @@ public final class TargetConfig {
     public TargetConfig(Provider provider,String host,String pin,String psk,int port,String path,String inputName) {
         if(provider==null)throw new IllegalArgumentException("Choose a TV protocol");
         this.provider=provider;this.host=LocalAddress.require(host);
-        this.pin=pin==null?"":pin.trim().toLowerCase(java.util.Locale.ROOT);
-        this.psk=psk==null?"":psk;
+        this.pin=provider!=Provider.SAMSUNG || pin==null?"":pin.trim().toLowerCase(java.util.Locale.ROOT);
+        this.psk=provider!=Provider.SONY || psk==null?"":psk;
         if(this.psk.length()>128 || this.psk.contains("\r") || this.psk.contains("\n"))throw new IllegalArgumentException("Invalid pre-shared key");
         if(provider==Provider.SAMSUNG && !this.pin.matches("[0-9a-f]{64}"))throw new IllegalArgumentException("Approve the Samsung certificate first");
         this.port=port==0?(provider==Provider.ROKU?8060:provider==Provider.SAMSUNG?8002:provider==Provider.SONY?80:9197):port;

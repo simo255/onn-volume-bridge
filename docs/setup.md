@@ -62,8 +62,9 @@ network or remote pairing. If the input interface is unknown, enter its exact
 name in the advanced field; do not guess event numbers. Setup changes restart
 input discovery automatically.
 
-If the TV address or certificate changes, save the new configuration and approve
-pairing again. Reboot behavior depends on when the firmware makes ADB and the
+If the TV address or certificate changes, use **Forget TV pairing**, save the new
+configuration and approve pairing again. This clears TV credentials and pauses
+the relay, while preserving the separate local ADB identity. Reboot behavior depends on when the firmware makes ADB and the
 remote available; it is not universally hardware-verified.
 
 To stop the bridge, turn off Enable volume relay and disable this accessibility

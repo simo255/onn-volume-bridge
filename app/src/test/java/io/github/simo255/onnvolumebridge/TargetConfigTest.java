@@ -9,4 +9,5 @@ public class TargetConfigTest {
  @Test public void headerInjectionAndUnsafeUpnpPathsAreRejected(){assertThrows(IllegalArgumentException.class,()->new TargetConfig(TargetConfig.Provider.SONY,"192.168.1.50","","bad\r\nInjected: true",0,"",""));assertThrows(IllegalArgumentException.class,()->new TargetConfig(TargetConfig.Provider.UPNP,"192.168.1.50","","",9197,"/../secrets",""));}
  @Test public void samsungRequiresAnExplicitCertificatePin(){assertThrows(IllegalArgumentException.class,()->new TargetConfig(TargetConfig.Provider.SAMSUNG,"192.168.1.50","","",0,"",""));}
  @Test public void samsungCannotSilentlyIgnoreACustomPort(){assertThrows(IllegalArgumentException.class,()->new TargetConfig(TargetConfig.Provider.SAMSUNG,"192.168.1.50",new String(new char[64]).replace('\0','a'),"",9000,"",""));}
+ @Test public void credentialsDoNotCrossProviderBoundaries(){TargetConfig roku=new TargetConfig(TargetConfig.Provider.ROKU,"192.168.1.50","unused-pin","unused-psk",0,"","");assertEquals("",roku.pin);assertEquals("",roku.psk);}
 }

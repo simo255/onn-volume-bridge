@@ -14,7 +14,7 @@
     <string name="accessibility">Enable accessibility service</string>
     <string name="remote_settings">Remote button settings</string>
     <string name="up">Volume +</string>
-    <string name="down">Volume âˆ’</string>
+    <string name="down">Volume Ã¢Ë†â€™</string>
     <string name="mute">Mute</string>
     <string name="paused">Relay paused</string>
     <string name="connected">TV and onn button reader connected</string>
@@ -31,4 +31,6 @@
     <string name="open_settings_failed">Open the box settings manually.</string>
     <string name="service_description">Relays volume and mute to your selected TV. Reads only volume events from the authorized onn remote over local ADB. Cannot read screen contents.</string>
     <string name="reconnect">Reconnect TV and button reader</string>
+    <string name="forget_pairing">Forget TV pairing</string>
+    <string name="forget_message">Remove saved TV credentials and pause the relay?</string>
 </resources>

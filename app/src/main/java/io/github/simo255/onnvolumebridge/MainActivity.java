@@ -43,7 +43,7 @@ public final class MainActivity extends Activity {
         provider.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             public void onNothingSelected(AdapterView<?> parent){}
             public void onItemSelected(AdapterView<?> parent,View view,int position,long id){
-                if(position!=previous[0]){port.setText(position==0?"8002":position==1?"8060":position==2?"80":"9197");previous[0]=position;}
+                if(position!=previous[0]){if(position==0){pin="";pinHost="";}port.setText(position==0?"8002":position==1?"8060":position==2?"80":"9197");previous[0]=position;}
                 psk.setVisibility(position==2?View.VISIBLE:View.GONE);path.setVisibility(position==3?View.VISIBLE:View.GONE);
             }
         });
@@ -56,6 +56,10 @@ public final class MainActivity extends Activity {
         });
         LinearLayout tests=new LinearLayout(this);content.addView(tests);
         button(tests,R.string.down,v->test(VolumeKey.DOWN));button(tests,R.string.up,v->test(VolumeKey.UP));button(tests,R.string.mute,v->test(VolumeKey.MUTE));
+        button(content,R.string.forget_pairing,v->new AlertDialog.Builder(this).setTitle(R.string.forget_pairing).setMessage(R.string.forget_message).setNegativeButton(R.string.cancel,null).setPositiveButton(R.string.approve,(d,w)->{
+            ConfigStore.prefs(this).edit().remove("samsung_token").remove("sony_psk").remove("cert_pin").putBoolean("enabled",false).putLong("config_revision",System.currentTimeMillis()).apply();
+            pin="";pinHost="";psk.setText("");enabled.setChecked(false);VolumeRelay.get(this).disconnect();LocalAdbVolumeKeys.get(this).stop();
+        }).show());
         button(content,R.string.reconnect,v->{VolumeRelay.get(this).connect();if(enabled.isChecked())LocalAdbVolumeKeys.get(this).start();});
         button(content,R.string.accessibility,v->open(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)));
         button(content,R.string.remote_settings,v->open(new Intent("android.settings.SLICE_SETTINGS").putExtra("slice_uri","content://com.google.android.tv.axel.sliceprovider/main")));
