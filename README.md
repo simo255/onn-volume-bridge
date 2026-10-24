@@ -1,0 +1,127 @@
+# onn Volume Bridge
+
+Use the **onn remote's volume buttons to control the TV's own volume** when the
+built-in remote setup fails. Independent Android app, multiple TV protocols,
+local network only, no cloud accounts, no root, and no launcher replacement.
+
+[Français](README.fr.md) · [Setup](docs/setup.md) · [Compatibility](docs/compatibility.md) · [Architecture](docs/architecture.md)
+
+## Why it exists
+
+On an onn Streaming Device 4K Pro running Android TV 12, adding a TV in
+**Set up remote buttons** failed with **Something went wrong**. The infrared
+service log reported `Unable to attest device ids`. Power via HDMI-CEC worked,
+but TV volume did not.
+
+This project works around the broken configuration path. It **does not repair
+Google's infrared service or reprogram the remote's IR codes**. Instead, it reads
+volume presses on the box and sends volume commands to a supported TV on the LAN.
+TVs that only accept infrared and expose no supported network volume API need
+another approach; the project does not claim support for every TV.
+
+## Current compatibility
+
+| TV protocol | Implementation | Hardware validation |
+|---|---|---|
+| Samsung Tizen | Paired TLS WebSocket, pinned TV certificate | Original fix physically verified with onn 4K Pro / Android TV 12 and Samsung with TizenOS |
+| Roku TV | ECP volume up/down/mute; TV endpoint verification | Experimental; protocol and local-server tests only |
+| Sony BRAVIA | Audio JSON-RPC with optional PSK, relative speaker volume and mute | Experimental; protocol tests only |
+| UPnP RenderingControl | Explicit local endpoint, 0–100 volume and mute | Experimental; read capability alone does not establish write support |
+
+The original Samsung-only fix worked on real hardware. **This extracted,
+independent app has not yet completed its own on-device acceptance run.** The
+other adapters need community hardware reports. LG webOS SSAP and other systems
+can be added through the adapter interface; they are not implemented in v0.1.0.
+See the [compatibility matrix](docs/compatibility.md) before enabling relaying.
+
+The brand on the bezel is not the protocol: for example, a TCL or Hisense TV
+running Roku OS uses the Roku adapter. Android/Google TV by itself does not imply
+Sony BRAVIA API support.
+
+## How it works
+
+```mermaid
+flowchart LR
+    R[Physical onn remote] --> I[onn input reader]
+    I --> B[Volume relay]
+    B --> S[Samsung Tizen]
+    B --> K[Roku TV]
+    B --> Y[Sony BRAVIA]
+    B --> U[UPnP endpoint]
+```
+
+- Volume +/− come from an authorized **loopback ADB** connection on the box.
+- Mute is filtered by an accessibility service; it cannot read screen contents.
+- The input reader discovers the event node by interface name and capabilities.
+  It prefers **Onn-Remote Keyboard**, the interface observed carrying volume;
+  **Consumer Control** carried navigation and mute on the tested remote.
+- The box's HDMI audio remains fixed. There is **no Android volume observer or
+  recentering trick**, and no repeated modification of the box's volume.
+- The app sends only volume up, volume down and mute to the selected TV.
+
+## Build and try
+
+Requirements: JDK 17, Android SDK 34 / build-tools 34.0.0, Android platform-tools.
+The app targets Android 8.0+; firmware support for local ADB still varies.
+
+```sh
+./gradlew --no-daemon testReleaseUnitTest lintRelease assembleRelease
+adb -s <box endpoint> install app/build/outputs/apk/release/app-release.apk
+```
+
+On Windows, use `gradlew.bat`. Set your own SDK location through Android Studio,
+`ANDROID_HOME`, or an ignored `local.properties` file.
+
+1. Open **onn Volume Bridge**, select your TV protocol and enter its local address.
+2. Save and connect. Samsung requires certificate approval plus on-TV pairing;
+   Sony may require its IP-control PSK; Roku TV needs **Control by mobile apps** enabled.
+3. Explicitly enable the relay, then use the app's three test buttons first.
+4. Enable **onn Volume Bridge** in the box's Accessibility settings.
+5. Approve the box's **USB debugging** request and tick **Always allow**.
+6. Keep remote **Volume control → Automatic (CEC)**. Keep the existing power setup.
+7. Test the physical onn remote: only the TV's volume should change.
+
+Use the bridge when normal CEC volume does not work. If CEC already changes your
+TV's volume, it can duplicate commands; leave this relay disabled and use CEC.
+Keep the box and TV on the same LAN and debugging enabled. No PC is needed during
+normal use after setup. Reboot/reconnect behavior still needs verification per
+firmware; **Reconnect TV and button reader** retries a stopped connection.
+
+[Detailed setup and recovery](docs/setup.md) · [optional desktop configuration tool](tools/configure.py)
+
+## Privacy and permissions
+
+`INTERNET` is the only ordinary permission. The accessibility binding is used to
+keep the relay available and handle mute; window-content retrieval is disabled.
+
+The app's ADB client is hardcoded to **127.0.0.1:5555**, uses an on-device generated
+RSA identity, and requires Android's approval. Its private key is encrypted with
+Android Keystore. Samsung tokens and Sony PSKs are encrypted too. Cloud backup,
+device transfer and app-data backup are disabled.
+
+Enabling debugging may expose the box's ADB listener to your LAN, depending on
+firmware. The app's loopback restriction does not close that listener. Use an
+owner-controlled, trusted network. Disabling debugging also disables raw-button
+reading. This is an owner-approved shell capability, not a root exploit.
+
+TV addresses must be literal private IPv4 addresses. HTTP redirects are rejected,
+responses and queues are bounded, and stale queued presses are dropped. Samsung
+uses pinned TLS after explicit initial trust. Roku/Sony/UPnP use their local HTTP
+APIs; Sony PSKs therefore travel over your trusted LAN using Sony's API.
+No analytics, screen recording, typed-text logging or public-network service.
+
+## Development and contribution
+
+There are no runtime dependencies beyond Android/Java APIs. JUnit and JSON are
+used only in JVM tests. Development release builds currently use the builder's
+local Android debug signing key; there is no official binary release yet.
+
+Add a provider through `TvProtocol` / `VolumeTarget`, with protocol tests and an
+honest compatibility entry. [Contributor guide](CONTRIBUTING.md).
+
+Hardware reports are welcome through the repository's compatibility issue form.
+Share only model, OS, firmware, app version, protocol and observed button behavior.
+Do **not** attach IP addresses, account names, tokens, ADB keys, complete device
+backups or raw input captures.
+
+MIT license. See [NOTICE](NOTICE) for the source of the original fix.

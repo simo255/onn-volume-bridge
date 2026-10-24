@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">onn Volume Bridge</string>
+    <string name="title">Votre tÃ©lÃ©commande onn. Le volume de votre tÃ©lÃ©.</string>
+    <string name="summary">Volume et Muet sont transmis Ã  votre tÃ©lÃ© sur le rÃ©seau local. Le niveau Android reste fixe.</string>
+    <string name="provider">Protocole du tÃ©lÃ©viseur</string>
+    <string name="host">Adresse IPv4 locale du tÃ©lÃ©viseur</string>
+    <string name="port">Port du tÃ©lÃ©viseur (avancÃ©)</string>
+    <string name="psk">ClÃ© prÃ©partagÃ©e du contrÃ´le IP Sony</string>
+    <string name="control_path">Chemin RenderingControl UPnP (avancÃ©)</string>
+    <string name="input_name">Nom de lâ€™entrÃ©e tÃ©lÃ©commande (option avancÃ©e)</string>
+    <string name="save">Enregistrer et connecter</string>
+    <string name="enable">Activer le relais de volume</string>
+    <string name="accessibility">Activer le service dâ€™accessibilitÃ©</string>
+    <string name="remote_settings">RÃ©glages des boutons de la tÃ©lÃ©commande</string>
+    <string name="up">Volume +</string>
+    <string name="down">Volume âˆ’</string>
+    <string name="mute">Muet</string>
+    <string name="paused">Relais en pause</string>
+    <string name="connected">TÃ©lÃ©viseur et lecteur des boutons onn connectÃ©s</string>
+    <string name="waiting">Connexion ou autorisation en attente. Suivez les Ã©tapes ci-dessous.</string>
+    <string name="setup_steps">1. Configurez la tÃ©lÃ© et testez son volume.\n2. Activez cette app dans AccessibilitÃ©.\n3. Autorisez le dÃ©bogage USB local et cochez Toujours autoriser.\n4. Choisissez Automatique (CEC) pour le contrÃ´le du volume.\nGardez le dÃ©bogage activÃ©. Aucun PC nâ€™est nÃ©cessaire aprÃ¨s la configuration.</string>
+    <string name="experimental">Seul le parcours Samsung a Ã©tÃ© testÃ© sur une vraie tÃ©lÃ©. Les autres adaptateurs sont expÃ©rimentaux : utilisez dâ€™abord les boutons de test.</string>
+    <string name="trust_title">Faire confiance au certificat de cette Samsung ?</string>
+    <string name="approve">Autoriser</string>
+    <string name="cancel">Annuler</string>
+    <string name="cert_failed">Samsung inaccessible. VÃ©rifiez son adresse et lâ€™accÃ¨s au rÃ©seau local.</string>
+    <string name="saved">EnregistrÃ©. Autorisez onn Volume sur la tÃ©lÃ© si demandÃ©.</string>
+    <string name="enable_first">Activez le relais avant de tester un bouton de volume.</string>
+    <string name="bad_config">VÃ©rifiez lâ€™adresse, le protocole, le port et les identifiants.</string>
+    <string name="open_settings_failed">Ouvrez les paramÃ¨tres de la box manuellement.</string>
+    <string name="service_description">Transmet Volume et Muet au tÃ©lÃ©viseur choisi. Lit uniquement les Ã©vÃ©nements de volume de la tÃ©lÃ©commande onn autorisÃ©e via ADB local. Ne lit pas le contenu de lâ€™Ã©cran.</string>
+    <string name="reconnect">Reconnecter la télé et le lecteur des boutons</string>
+</resources>

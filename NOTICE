@@ -1,0 +1,14 @@
+onn Volume Bridge is an independent extraction and generalization of a local
+Samsung-volume workaround developed in simo255/cleanyourtv, itself derived from
+CleanYourTV/tv-vibehack by Gathin and contributors.
+
+The original launcher, branding assets, fonts, device backups and user settings
+are not included. The inherited Gradle wrapper and configuration are build tooling.
+The MIT notice in LICENSE is retained for derived source.
+
+Samsung protocol reference: https://github.com/xchwarze/samsung-tv-ws-api
+Roku ECP: https://developer.roku.com/dev/docs/external-control-api
+Sony Audio API: https://pro-bravia.sony.net/ja/remote-display-control/rest-api/reference/
+ADB protocol: https://android.googlesource.com/platform/packages/modules/adb/+/refs/heads/main/OVERVIEW.TXT
+
+No affiliation with Walmart/onn, Google, Samsung, Roku or Sony is implied.

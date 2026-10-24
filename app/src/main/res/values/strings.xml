@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">onn Volume Bridge</string>
+    <string name="title">Your onn remote. Your TV volume.</string>
+    <string name="summary">Volume and mute are sent to your TV over your local network. Android volume stays fixed.</string>
+    <string name="provider">TV protocol</string>
+    <string name="host">TV local IPv4 address</string>
+    <string name="port">TV port (advanced)</string>
+    <string name="psk">Sony IP-control pre-shared key</string>
+    <string name="control_path">UPnP RenderingControl path (advanced)</string>
+    <string name="input_name">Remote input name (optional advanced override)</string>
+    <string name="save">Save and connect</string>
+    <string name="enable">Enable volume relay</string>
+    <string name="accessibility">Enable accessibility service</string>
+    <string name="remote_settings">Remote button settings</string>
+    <string name="up">Volume +</string>
+    <string name="down">Volume âˆ’</string>
+    <string name="mute">Mute</string>
+    <string name="paused">Relay paused</string>
+    <string name="connected">TV and onn button reader connected</string>
+    <string name="waiting">Connecting or waiting for permission. Follow the steps below.</string>
+    <string name="setup_steps">1. Configure your TV and test its volume.\n2. Enable this app in Accessibility.\n3. Approve local USB debugging and select Always allow.\n4. Set remote Volume control to Automatic (CEC).\nKeep debugging enabled. No PC is needed after setup.</string>
+    <string name="experimental">Only the Samsung path has been tested on a real TV. Other adapters are experimental; use the test buttons first.</string>
+    <string name="trust_title">Trust this Samsung TV certificate?</string>
+    <string name="approve">Approve</string>
+    <string name="cancel">Cancel</string>
+    <string name="cert_failed">Cannot reach the Samsung TV. Check its address and local-network access.</string>
+    <string name="saved">Saved. Approve onn Volume on the TV if prompted.</string>
+    <string name="enable_first">Enable the relay before testing a volume button.</string>
+    <string name="bad_config">Check the TV address, protocol, port and credentials.</string>
+    <string name="open_settings_failed">Open the box settings manually.</string>
+    <string name="service_description">Relays volume and mute to your selected TV. Reads only volume events from the authorized onn remote over local ADB. Cannot read screen contents.</string>
+    <string name="reconnect">Reconnect TV and button reader</string>
+</resources>

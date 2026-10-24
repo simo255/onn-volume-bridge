@@ -1,0 +1,20 @@
+# Generated builds and local SDK configuration
+.gradle/
+**/build/
+local.properties
+*.apk
+*.aab
+*.jks
+*.keystore
+# Private device data and credentials
+backup/
+work/
+local/
+*.private.*
+.env
+.env.*
+__pycache__/
+*.pyc
+.DS_Store
+.idea/
+*.iml
