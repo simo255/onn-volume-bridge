@@ -10,7 +10,7 @@ onn avec le volume du téléviseur**, lorsque la configuration infrarouge de la 
 
 - Moteur de lecture des boutons onn séparé des protocoles des téléviseurs.
 - Samsung Tizen : WebSocket chiffré et appairage autorisé sur la télé.
-- Roku TV : commandes ECP, avec vérification qu’il s’agit d’une télé Roku.
+- Roku TV : commandes ECP et maintien natif (keydown/keyup), avec vérification qu’il s’agit d’une télé Roku.
 - Sony BRAVIA : API audio JSON-RPC et clé PSK si nécessaire.
 - UPnP RenderingControl : mode expérimental pour des points de contrôle compatibles.
 - Configuration à la télé en français et en anglais, pause et reconnexion.
@@ -58,3 +58,7 @@ son service d’accessibilité. Le projet ne supprime ni ne désactive aucune ap
 Licence MIT. Aucun APK officiel n’est publié pour l’instant ; chacun peut construire
 le code source. Les retours de compatibilité matérielle aideront à élargir la prise
 en charge sans promettre une compatibilité universelle non vérifiée.
+
+[Maintien natif et recherche par protocole](docs/native-hold.md) : Roku reste à
+valider sur une vraie télé ; pistes Android TV Remote pour Sony et autres marques,
+Vizio SmartCast et LG webOS.

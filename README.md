@@ -24,7 +24,7 @@ another approach; the project does not claim support for every TV.
 | TV protocol | Implementation | Hardware validation |
 |---|---|---|
 | Samsung Tizen | Paired TLS WebSocket, pinned TV certificate | Independent-app core volume, mute and held-button release confirmed with Samsung / TizenOS |
-| Roku TV | ECP volume up/down/mute; TV endpoint verification | Experimental; protocol and local-server tests only |
+| Roku TV | ECP volume/mute and native keydown/keyup; TV endpoint verification | Experimental; protocol and local-server tests only |
 | Sony BRAVIA | Audio JSON-RPC with optional PSK, relative speaker volume and mute | Experimental; protocol tests only |
 | UPnP RenderingControl | Explicit local endpoint, 0–100 volume and mute | Experimental; read capability alone does not establish write support |
 
@@ -33,7 +33,7 @@ remote and a Samsung TV with TizenOS, including held buttons and release. The fu
 acceptance checklist (including reboot, playback and headphones) is still pending.
 The other adapters need community hardware reports. LG webOS SSAP and other systems
 can be added through the adapter interface; they are not implemented yet.
-See the [compatibility matrix](docs/compatibility.md) and [scoped hardware report](docs/validation.md) before enabling relaying.
+See [native hold support and research](docs/native-hold.md), the [compatibility matrix](docs/compatibility.md) and [scoped hardware report](docs/validation.md) before enabling relaying.
 
 The brand on the bezel is not the protocol: for example, a TCL or Hisense TV
 running Roku OS uses the Roku adapter. Android/Google TV by itself does not imply

@@ -12,4 +12,12 @@ final class RokuProtocol implements TvProtocol {
         String command=key==VolumeKey.UP?"VolumeUp":key==VolumeKey.DOWN?"VolumeDown":"VolumeMute";
         http.request("POST","/keypress/"+command,Collections.emptyMap(),"");
     }
+    @Override public boolean supportsNativeHold() { return true; }
+    @Override public void press(VolumeKey key) throws Exception { holdRequest("keydown", key); }
+    @Override public void release(VolumeKey key) throws Exception { holdRequest("keyup", key); }
+    private void holdRequest(String action, VolumeKey key) throws Exception {
+        if (key == VolumeKey.MUTE) throw new IllegalArgumentException("Mute is a single press");
+        http.request("POST", "/" + action + "/" + (key == VolumeKey.UP ? "VolumeUp" : "VolumeDown"),
+                Collections.emptyMap(), "");
+    }
 }

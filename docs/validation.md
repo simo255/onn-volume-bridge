@@ -40,3 +40,16 @@ Roku, Sony and UPnP were not hardware tested here.
 Build verification for v0.1.6: 40 JVM tests passed; release compilation succeeded;
 Android lint reported zero errors. Tests and build do not establish other TV models'
 compatibility. See [the acceptance checklist](compatibility.md).
+
+## v0.1.7 Roku native hold (protocol only)
+
+Roku keydown/keyup was added after the Samsung hardware check. Tests cover exact
+volume paths, empty POST bodies on a real loopback HTTP server, short press and
+direction ordering, release under queue pressure, release after an uncertain
+keydown failure, cleanup after close, and declining unsupported/native-mute cases.
+No Roku, Sony, LG or Vizio hardware was used for this change. The installed
+Samsung baseline remains the physically tested v0.1.6.
+
+Build verification for v0.1.7: 48 JVM tests passed, lint passed with zero errors,
+and the release APK compiled successfully. No hardware compatibility is inferred
+from those checks.

@@ -5,16 +5,16 @@ opens a read-only `getevent -pl` shell command, selects a remote interface throu
 `InputDeviceSelector`, then listens to that node. It parses only volume up/down
 press/release and discards every other event without retaining it.
 `VolumeHoldRepeater` first asks the selected target for native hold support.
-Samsung sends one `Press` on down and one `Release` on up; the TV owns its repeat
-cadence. Other adapters currently use progressive click repetition: first repeat
+Samsung sends `Press` / `Release`; Roku TV sends ECP `keydown` / `keyup`.
+The TV owns its repeat cadence. Other adapters currently use progressive click repetition: first repeat
 after 150 ms, then 120 ms to 17 ms over 1.2 seconds. Both modes stop on release,
 pause, route loss, connection loss or reader shutdown. Duplicate down/native
 repeat input events do not double the cadence. A 10-second safety cap releases
 native holds or cancels repeats when an input release is lost.
 
 Native hold is a target capability, not a manufacturer condition in the input
-reader. Roku ECP also documents keydown/keyup, but that path is not implemented
-or hardware-validated here yet. Sony's current audio API and generic UPnP adapter
+reader. Roku ECP keydown/keyup is implemented and protocol-tested, with physical
+Roku validation still pending. Sony's current audio API and generic UPnP adapter
 set volume rather than forwarding held-button state.
 
 Selection prefers the observed **Onn-Remote Keyboard** interface, even when the
@@ -49,3 +49,5 @@ cannot call. Neither setup path disables system packages or changes Home.
 There is no cloud service, telemetry, runtime dependency, launcher integration,
 firmware modification, infrared attestation bypass or generic remote shell API.
 The ADB client has fixed read-only command construction and a fixed loopback endpoint.
+
+See [native hold implementation and research](native-hold.md) for other systems.

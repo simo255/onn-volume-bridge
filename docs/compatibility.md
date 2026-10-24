@@ -16,7 +16,7 @@
 | onn 4K Pro / Android TV 12, firmware SGZ3.231226.086.A1.12555768 | Independent app reads physical volume from Onn-Remote Keyboard and mute through accessibility | Full reboot/reconnect, playback/headphones, broader remote revisions |
 | Samsung / TizenOS | Independent app: physical +/−, mute and native hold reported working; onn HDMI volume fixed | Full reboot, playback/headphones and network interruption acceptance |
 | Other Samsung Tizen TVs | Implemented pinned WSS remote protocol | Models, pairing, certificate lifetime, output routes |
-| Roku TV | API request tests plus actual loopback HTTP transport tests | Physical Roku TVs, Roku OS versions and local-control settings |
+| Roku TV | ECP keypress and native keydown/keyup; request, loopback HTTP and lifecycle tests | Physical Roku TVs, Roku OS versions and local-control settings |
 | Sony BRAVIA Audio API | Relative speaker volume, PSK header, mute state and API-error tests | Real compatible models and PSK/IP-control settings |
 | UPnP RenderingControl | Get/SetVolume, clamp, Get/SetMute and write-failure tests | Explicit endpoint, 0–100 scale and writable audio control on real TVs |
 | LG webOS SSAP | Not implemented | Adapter, pairing, protocol tests and hardware |
@@ -45,3 +45,6 @@ uses the Samsung WebSocket adapter instead.
 
 No screenshots with account details, city names, IP addresses or device identifiers.
 No raw logs/backups/keys. Use the compatibility issue template for a sanitized report.
+
+[Native hold support and research](native-hold.md) records protocol capabilities,
+Roku platform restrictions, and the Sony/Android TV, Vizio and LG adapter paths.
