@@ -225,6 +225,34 @@ public final class LocalAdbVolumeKeys {
         hold.down(key);
     }
 
+    private volatile Socket setupSocket;
+
+    /** Explicit setup button only. Uses the app's own approved loopback identity. */
+    boolean configureRemote() throws Exception {
+        AdbKey key=loadKey();
+        Socket socket=new Socket();setupSocket=socket;
+        try {
+            socket.connect(new InetSocketAddress("127.0.0.1",5555),4000);
+            socket.setSoTimeout(120000);
+            Session session=new Session(socket);session.authenticate(key);socket.setSoTimeout(12000);
+            String original=session.shellOutput("settings get secure enabled_accessibility_services",16384).trim();
+            String combined=SetupCommands.servicesWithBridge(original);
+            if(!combined.equals(original)) {
+                if(!prefs.contains("setup_previous_accessibility"))prefs.edit()
+                    .putString("setup_previous_accessibility",SecretStore.seal(original)).apply();
+                session.shellOutput("settings put secure enabled_accessibility_services '"+combined+"'",4096);
+            }
+            session.shellOutput("settings put secure accessibility_enabled 1",4096);
+            String actual=session.shellOutput("settings get secure enabled_accessibility_services",16384);
+            if(!actual.contains("io.github.simo255.onnvolumebridge/"))throw new IllegalStateException("Accessibility setup was refused");
+            boolean fixed=SetupCommands.fixedHdmi(session.shellOutput("dumpsys audio",256*1024));
+            prefs.edit().putBoolean("cec_confirmed",fixed).apply();
+            return fixed;
+        } finally { close(socket);if(setupSocket==socket)setupSocket=null; }
+    }
+
+    void cancelSetup() { close(setupSocket);setupSocket=null; }
+
     public void cancelHold() { hold.stop(); }
 
     private void emitVolume(VolumeKey key) {

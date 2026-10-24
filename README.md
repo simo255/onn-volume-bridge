@@ -6,6 +6,17 @@ local network only, no cloud accounts, no root, and no launcher replacement.
 
 [Français](README.fr.md) · [Setup](docs/setup.md) · [Compatibility](docs/compatibility.md) · [Architecture](docs/architecture.md)
 
+## Download and setup
+
+**[Download the APK — v0.2.0 preview](https://github.com/simo255/onn-volume-bridge/releases/download/v0.2.0/onn-volume-bridge-v0.2.0.apk)** · [Release notes and checksums](https://github.com/simo255/onn-volume-bridge/releases/tag/v0.2.0)
+
+Install on your onn, choose your TV from **Find TVs on my network**, then select
+**Set up my remote automatically**. Approve the Android prompts and try the remote.
+The app handles its own accessibility setup after local debugging approval and
+checks fixed HDMI volume. It opens remote settings only if a manual step remains.
+English is the default; French is available in Advanced options. No PC is needed
+for normal use. See [setup and recovery](docs/setup.md) for installation and limits.
+
 ## Why it exists
 
 On an onn Streaming Device 4K Pro running Android TV 12, adding a TV in
@@ -73,14 +84,10 @@ adb -s <box endpoint> install app/build/outputs/apk/release/app-release.apk
 On Windows, use `gradlew.bat`. Set your own SDK location through Android Studio,
 `ANDROID_HOME`, or an ignored `local.properties` file.
 
-1. Open **onn Volume Bridge**, select your TV protocol and enter its local address.
-2. Save and connect. Samsung requires certificate approval plus on-TV pairing;
-   Sony may require its IP-control PSK; Roku TV needs **Control by mobile apps** enabled.
-3. Explicitly enable the relay, then use the app's three test buttons first.
-4. Enable **onn Volume Bridge** in the box's Accessibility settings.
-5. Approve the box's **USB debugging** request and tick **Always allow**.
-6. Keep remote **Volume control â†’ Automatic (CEC)**. Keep the existing power setup.
-7. Test the physical onn remote: only the TV's volume should change.
+Follow the in-app setup: connect the TV, run automatic remote setup, then test
+short presses and holding with the physical onn remote. Android debugging approval
+and on-TV pairing remain explicit; manual setup is available when firmware refuses
+a setting. [Detailed instructions](docs/setup.md).
 
 Use the bridge when normal CEC volume does not work. If CEC already changes your
 TV's volume, it can duplicate commands; leave this relay disabled and use CEC.
@@ -97,7 +104,9 @@ keep the relay available and handle mute; window-content retrieval is disabled.
 
 The app's ADB client is hardcoded to **127.0.0.1:5555**, uses an on-device generated
 RSA identity, and requires Android's approval. Its private key is encrypted with
-Android Keystore. Samsung tokens and Sony PSKs are encrypted too. Cloud backup,
+Android Keystore. The explicit automatic-setup action uses fixed shell operations
+to add only this app to accessibility and inspect HDMI volume behavior; normal
+button monitoring remains read-only. Samsung tokens and Sony PSKs are encrypted too. Cloud backup,
 device transfer and app-data backup are disabled.
 
 Enabling debugging may expose the box's ADB listener to your LAN, depending on
@@ -114,8 +123,9 @@ No analytics, screen recording, typed-text logging or public-network service.
 ## Development and contribution
 
 There are no runtime dependencies beyond Android/Java APIs. JUnit and JSON are
-used only in JVM tests. Development release builds currently use the builder's
-local Android debug signing key; there is no official binary release yet.
+used only in JVM tests. A signed public preview APK is available in GitHub Releases.
+Local builds use the builder's developer identity by default; published builds can
+use an external private keystore. See [build and signing](docs/setup.md#build-from-source-or-configure-from-a-computer).
 
 Add a provider through `TvProtocol` / `VolumeTarget`, with protocol tests and an
 honest compatibility entry. [Contributor guide](CONTRIBUTING.md).

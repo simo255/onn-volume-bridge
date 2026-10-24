@@ -53,3 +53,23 @@ Samsung baseline remains the physically tested v0.1.6.
 Build verification for v0.1.7: 48 JVM tests passed, lint passed with zero errors,
 and the release APK compiled successfully. No hardware compatibility is inferred
 from those checks.
+
+## v0.2.0 setup and release check
+
+The English-first UI was installed on the existing French-language onn while
+preserving the signing identity and saved TV pairing. Real SSDP discovery listed
+the Samsung/TizenOS candidate. The automatic remote action advanced to the test
+screen after verifying local authentication, accessibility and fixed HDMI volume;
+the enabled accessibility-service list was unchanged. The user confirmed volume
+up/down and holding still worked. Navigation screens were inspected on the TV.
+
+This was an update of an already paired and authorized installation, not a fresh
+factory-state enrollment. First-use debugging prompts, refused settings, other
+firmwares and non-Samsung hardware still need community validation. The public
+preview is signed with the same identity as the early local installation and
+includes checksums; private signing material and device captures are not published.
+
+Build verification: 57 JVM tests passed, lint passed with zero errors, and the
+release APK compiled. Tests include discovery filtering and injection-resistant
+accessibility-list merging that preserves other services. The full acceptance
+limits above still apply.

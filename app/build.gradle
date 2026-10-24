@@ -1,4 +1,5 @@
 plugins { id 'com.android.application' }
+def publishedStore = System.getenv('ONN_RELEASE_KEYSTORE')
 android {
     namespace 'io.github.simo255.onnvolumebridge'
     compileSdk 34
@@ -6,10 +7,20 @@ android {
         applicationId 'io.github.simo255.onnvolumebridge'
         minSdk 26
         targetSdk 34
-        versionCode 8
-        versionName '0.1.7'
+        versionCode 9
+        versionName '0.2.0'
     }
-    buildTypes { release { minifyEnabled false; signingConfig signingConfigs.debug } }
+    signingConfigs {
+        if (publishedStore) {
+            published {
+                storeFile file(publishedStore)
+                storePassword System.getenv('ONN_RELEASE_STORE_PASSWORD')
+                keyAlias System.getenv('ONN_RELEASE_KEY_ALIAS')
+                keyPassword System.getenv('ONN_RELEASE_KEY_PASSWORD')
+            }
+        }
+    }
+    buildTypes { release { minifyEnabled false; signingConfig publishedStore ? signingConfigs.published : signingConfigs.debug } }
     compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
     lint { disable 'ExpiredTargetSdkVersion' }
 }

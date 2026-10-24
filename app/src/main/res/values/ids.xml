@@ -1,0 +1,6 @@
+<resources>
+    <item name="tv_address" type="id" />
+    <item name="tv_port" type="id" />
+    <item name="control_path_field" type="id" />
+    <item name="input_name_field" type="id" />
+</resources>

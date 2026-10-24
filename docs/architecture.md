@@ -48,6 +48,24 @@ cannot call. Neither setup path disables system packages or changes Home.
 
 There is no cloud service, telemetry, runtime dependency, launcher integration,
 firmware modification, infrared attestation bypass or generic remote shell API.
-The ADB client has fixed read-only command construction and a fixed loopback endpoint.
+The ADB client has fixed command construction and a fixed loopback endpoint.
+Only the explicit setup action writes this app’s accessibility configuration;
+normal input monitoring remains read-only.
 
 See [native hold implementation and research](native-hold.md) for other systems.
+
+## Guided and automatic setup
+
+The UI defaults to English independently of Android locale; French is an explicit
+Advanced option. Discovery is a bounded three-second SSDP query and trusts only
+private IPv4 response senders as candidates. It never fetches LOCATION URLs.
+Selecting a candidate initiates connection, with certificate and TV pairing approval
+still required. Connection itself sends no volume command.
+
+An explicit automatic-setup action authenticates a separate short-lived session
+with the app's existing loopback ADB key. Only fixed setup commands are exposed:
+read/add this app to the accessibility list, enable accessibility, verify the
+result and inspect fixed HDMI behavior. Other services are preserved. The original
+list is saved encrypted before a change. The socket closes on Activity destruction.
+The persistent key monitor remains read-only. Unsupported firmware gets an official
+settings/manual fallback rather than hidden API guesses or silent permission grants.

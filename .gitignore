@@ -6,6 +6,8 @@ local.properties
 *.aab
 *.jks
 *.keystore
+*.p12
+*.pfx
 # Private device data and credentials
 backup/
 work/

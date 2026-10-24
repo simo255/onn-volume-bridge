@@ -30,35 +30,16 @@ comme disponibles dans cette première version.
 
 ## Installation
 
-Construisez le projet avec JDK 17 et Android SDK 34 :
+**[Télécharger l’APK — aperçu v0.2.0](https://github.com/simo255/onn-volume-bridge/releases/download/v0.2.0/onn-volume-bridge-v0.2.0.apk)** · [Notes et sommes de contrôle](https://github.com/simo255/onn-volume-bridge/releases/tag/v0.2.0)
 
-```powershell
-.\gradlew.bat --no-daemon testReleaseUnitTest lintRelease assembleRelease
-adb -s <box endpoint> install app/build/outputs/apk/release/app-release.apk
-```
+Installez l’APK sur la onn, choisissez votre télé dans **Find TVs on my network**,
+puis **Set up my remote automatically**. Autorisez les demandes Android et testez
+la vraie télécommande. L’app active son service de volume après votre autorisation
+de débogage local et vérifie le volume HDMI. Un réglage manuel reste nécessaire
+uniquement si le système ne permet pas de le vérifier ou de l’appliquer.
 
-Ouvrez l’app, choisissez le protocole de votre télé et son adresse locale. Enregistrez,
-autorisez l’appairage si nécessaire, puis testez les trois boutons de l’app.
-Activez ensuite le relais et son service d’accessibilité, et autorisez le débogage
-USB local en cochant **Toujours autoriser**. Gardez le contrôle du volume de la
-box sur **Automatique (CEC)**.
-
-La box reste à niveau fixe ; seules les commandes destinées au volume de la télé
-sont relayées. Si le CEC règle déjà correctement le volume, ce relais est inutile
-et pourrait doubler les commandes : laissez-le désactivé.
-
-Après la configuration, aucun PC n’est nécessaire pendant l’utilisation. La télé
-et la box doivent rester sur le même réseau et le débogage doit rester activé.
-Selon le firmware, le débogage peut exposer ADB au réseau local : utilisez un
-réseau de confiance. La connexion de l’app reste limitée à la boucle locale.
-
-Pour revenir au fonctionnement initial, mettez le relais en pause et désactivez
-son service d’accessibilité. Le projet ne supprime ni ne désactive aucune app système.
-
-Licence MIT. Aucun APK officiel n’est publié pour l’instant ; chacun peut construire
-le code source. Les retours de compatibilité matérielle aideront à élargir la prise
-en charge sans promettre une compatibilité universelle non vérifiée.
-
-[Maintien natif et recherche par protocole](docs/native-hold.md) : Roku reste à
-valider sur une vraie télé ; pistes Android TV Remote pour Sony et autres marques,
-Vizio SmartCast et LG webOS.
+L’app s’ouvre en anglais par défaut, même sur une box en français. Le français
+reste disponible dans **Advanced options → App language**.
+Les étapes de débogage et d’appairage imposées par Android et la télé ne peuvent
+pas être acceptées silencieusement par l’app. Aucun PC n’est nécessaire à l’usage.
+Voir le [guide de configuration](docs/setup.md) pour les détails et limites.

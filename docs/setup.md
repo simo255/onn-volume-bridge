@@ -1,78 +1,110 @@
-# Setup and recovery
+# Install and set up
 
-## Before installing
+## Download
 
-Check [compatibility](compatibility.md). Prefer the TV's normal infrared/CEC setup
-when it works. This workaround is useful when those paths fail for volume and the
-TV exposes a supported local network control API.
+Download [onn-volume-bridge-v0.2.0.apk](https://github.com/simo255/onn-volume-bridge/releases/download/v0.2.0/onn-volume-bridge-v0.2.0.apk)
+from the [v0.2.0 preview release](https://github.com/simo255/onn-volume-bridge/releases/tag/v0.2.0).
+The release includes SHA-256 checksums and the signing certificate fingerprint.
+Android TV 8.0 or newer is required. This is an early public preview; see
+[compatibility](compatibility.md) before installing.
 
-Build with JDK 17 and SDK 34, then sideload your own APK. The package is
-`io.github.simo255.onnvolumebridge`. It is independent of CleanYourTV and any launcher.
-Do not run two volume relays at the same time; both may send the same press.
+Transfer the APK to the onn using a USB drive or your usual file-transfer method,
+then open it with the Android package installer. If Android asks, allow installation
+from that specific installer/source. No PC build or ADB command is needed for this
+installation path. Do not bypass a firmware verification refusal.
 
-## TV-specific preparation
+Only run one volume bridge at a time. Installing an update with the same signing
+identity preserves saved pairing. The package is `io.github.simo255.onnvolumebridge`.
 
-- **Samsung Tizen**: TV on the same LAN. Select Samsung, enter its private IPv4
-  address and save. Approve initial certificate trust in the app, then approve
-  **onn Volume** on the TV. Later connections require that exact certificate.
-- **Roku TV**: enable Control by mobile apps in the TV's advanced system settings.
-  Use port 8060. Only Roku TVs are accepted; arbitrary streaming players are not.
-- **Sony BRAVIA**: use a model exposing the Audio JSON-RPC API. Enable its IP-control
-  settings, configure a pre-shared key if required, and enter that key in the app.
-  Port 80 is the default. Models/menus differ and need verification.
-- **UPnP**: explicitly select a compatible RenderingControl endpoint, port and path.
-  Only a 0–100 volume scale is assumed. A successful read is not proof of writes;
-  verify using the app's test buttons. This mode is experimental.
+## The short setup flow
 
-## onn configuration
+The app opens in English by default, even when Android is in another language.
+French is available under **Advanced options → App language**.
 
-1. Turn on USB/ADB debugging in the box's developer settings. Some firmware exposes
-   the listener on the LAN as well; use a trusted owner-controlled network.
-2. Save the TV settings in onn Volume Bridge. Explicitly enable relaying.
-3. Test volume up/down/mute from the app, then enable its accessibility service.
-4. Android prompts to authorize a new local debugging identity. Tick Always allow
-   and authorize. The identity belongs to this app on the box, not a remote PC.
-5. In remote-button settings choose Volume control → Automatic (CEC). The app's
-   shortcut opens the official Google TV settings panel when available.
-6. Test the actual remote, while ensuring the box's HDMI audio level stays fixed.
+1. **Connect your TV.** Choose its system, then **Find TVs on my network** and
+   select your TV. Connection starts after selection. If discovery finds nothing,
+   enter the TV address from its network settings and choose **Save and connect**.
+   Samsung requires certificate trust and **Allow** on the TV itself. Sony may
+   need its IP-control pre-shared key. Roku TV requires Control by mobile apps.
+2. Choose **Set up my remote automatically**. If USB debugging is off, the app
+   sends you to Developer options. Enable it and return. Approve Android's local
+   USB debugging request and select **Always allow** when asked. The app then
+   enables its own accessibility service, preserves other enabled services, and
+   checks whether HDMI volume is fixed. It advances when the connections are ready.
+3. **Try the remote.** Check short presses, hold/release, mute and ordinary
+   navigation. Choose **My remote works — finish** after testing.
 
-Other accessibility services remain enabled. Window-content retrieval is disabled.
-The app does not read text from the screen. Mute uses a key filter, and normal
-navigation is left to Android.
+If HDMI volume is not reported as fixed, the app opens the official remote settings
+through a prompt. Choose **Volume control → Automatic (CEC)**, then return; setup
+checks again. This proprietary setting cannot be changed reliably on every firmware.
+Keep the existing power-button setup. If ordinary CEC already controls TV volume,
+use it instead of enabling a second bridge.
 
-## Optional desktop setup
+Android does not let this ordinary app silently turn debugging on or approve its
+own debugging identity. Those initial system approvals remain yours. Automatic
+accessibility setup runs only after the explicit setup action and approved local
+ADB authentication. It adds only this app's component; it does not disable other
+services or grant broad permissions to other apps. No arbitrary shell command is
+accepted by the UI or a network endpoint. The pre-change accessibility list is
+stored encrypted on the box when a change is needed.
 
-`tools/configure.py --help` documents its arguments. It only configures an already
-installed app; it does not install packages or silently grant accessibility/debugging.
-The app UI is preferred for passwords and certificate approval.
+Keep the TV and onn on the same trusted network. Debugging must stay enabled for
+the bridge; some firmware also exposes the ADB listener to the LAN. The app itself
+connects only to the box's loopback address. No PC is needed during normal use.
+
+## When automatic setup needs help
+
+Use **Manual setup / troubleshooting** to see the individual controls.
+
+- If Developer options are hidden: Android Settings → System / Device preferences
+  → About → select Android TV OS build seven times. Enable USB debugging and return.
+- If an authorization prompt was denied or timed out, approve it and retry setup.
+- If firmware does not expose loopback ADB, the connection cannot be made by this
+  app alone. Availability differs by firmware; do not assume USB debugging alone
+  guarantees a network listener.
+- If accessibility setup is refused, enable **onn Volume Bridge** in Android's
+  Accessibility settings manually. The app cannot read screen contents.
+- Advanced options hold a custom port, UPnP control path and remote-interface override.
+  Unknown input interfaces need an exact explicit selection; do not guess event nodes.
+
+Discovery is a short, user-initiated SSDP query, not a subnet scan. It does not pair,
+fetch advertised URLs or send volume commands. Results are candidates, not verified
+TV identities. Some TVs do not advertise; manual addressing remains available.
+
+## Pause, reconnect and recovery
+
+The completion screen has **Pause / resume**, **Reconnect**, **Review setup** and
+**Forget TV pairing**. Forgetting clears TV credentials and pauses relaying while
+preserving the separate app-owned local debugging identity. If the TV address or
+certificate changes, forget pairing, enter the new address and approve it again.
+
+If app buttons fail, check the TV address, local-control setting and on-TV pairing.
+If app buttons work but the remote does not, check local debugging authorization
+and accessibility. If both onn and TV volume change, check the remote volume mode.
+If changes continue after release, pause and reconnect before trying again.
+
+To fully stop the bridge, pause it and turn off **onn Volume Bridge** under Android
+Accessibility. No package has been removed. You can then turn debugging off; doing
+so stops local button reading. Do not revoke all debugging identities unless you
+intend to revoke other authorized tools too.
+
+Reboot, playback, headphones and standby acceptance still need checking per firmware.
+Other TV adapters remain experimental; a protocol test is not a hardware report.
+
+## Build from source or configure from a computer
+
+Build with JDK 17, Android SDK 34 and build-tools 34.0.0:
 
 ```sh
-python tools/configure.py --adb <adb executable> --device <box endpoint> --provider roku --host 192.168.1.50
+./gradlew --no-daemon testReleaseUnitTest lintRelease assembleRelease
 ```
 
-`192.168.1.50` is an example, not a saved device address. Sony PSKs can optionally be
-read from an environment variable; they are never printed, but the UI avoids
-passing them through ADB command arguments. Samsung desktop setup requires an
-explicit certificate pin or explicit first-use trust flag.
+On Windows use `gradlew.bat`. Set your own ignored SDK location. Local builds use
+your developer signing identity. Published builds can use an external keystore
+through `ONN_RELEASE_KEYSTORE`, `ONN_RELEASE_STORE_PASSWORD`, `ONN_RELEASE_KEY_ALIAS`
+and `ONN_RELEASE_KEY_PASSWORD`. Keep the keystore and credentials outside Git;
+retain the same identity for future updates.
 
-## Reconnect and disable
-
-Use **Reconnect TV and button reader** after changing debugging, authorizations,
-network or remote pairing. If the input interface is unknown, enter its exact
-name in the advanced field; do not guess event numbers. Setup changes restart
-input discovery automatically.
-
-If the TV address or certificate changes, use **Forget TV pairing**, save the new
-configuration and approve pairing again. This clears TV credentials and pauses
-the relay, while preserving the separate local ADB identity. Reboot behavior depends on when the firmware makes ADB and the
-remote available; it is not universally hardware-verified.
-
-To stop the bridge, turn off Enable volume relay and disable this accessibility
-service. No system package was removed or disabled. Restore the previous remote
-volume mode if you changed it. You can then turn debugging off; doing so also
-stops loopback button reading. Do not revoke all ADB authorizations unless you
-intend to revoke other authorized tools as well.
-
-If app test buttons work but physical +/− do not, report the remote model/interface
-through a sanitized compatibility issue. If both fail, check the TV's protocol,
-LAN reachability, pairing and local-control setting first.
+`tools/configure.py --help` remains available for optional desktop provisioning.
+It does not install packages or silently grant accessibility/debugging. Prefer
+the app UI for credentials and certificate approval.
