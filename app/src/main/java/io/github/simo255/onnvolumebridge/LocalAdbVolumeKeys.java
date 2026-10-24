@@ -2,7 +2,6 @@ package io.github.simo255.onnvolumebridge;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.SystemClock;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.util.Base64;
@@ -28,6 +27,8 @@ import java.security.PrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.RSAKeyGenParameterSpec;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,12 +59,24 @@ public final class LocalAdbVolumeKeys {
     private boolean running;
     private long generation;
     private Thread thread;
-    private final long[] lastKeyTime = new long[2];
-    private final boolean[] pressed = new boolean[2];
+    private final ScheduledThreadPoolExecutor repeatWorker;
+    private final VolumeHoldRepeater hold;
 
     private LocalAdbVolumeKeys(Context context) {
         this.context = context.getApplicationContext();
         prefs = this.context.getSharedPreferences("bridge", Context.MODE_PRIVATE);
+        repeatWorker = new ScheduledThreadPoolExecutor(1, task -> {
+            Thread worker = new Thread(task, "OnnVolumeBridge-volume-hold");
+            worker.setDaemon(true); return worker;
+        });
+        repeatWorker.setRemoveOnCancelPolicy(true);
+        hold = new VolumeHoldRepeater((task, delay) -> {
+            java.util.concurrent.ScheduledFuture<?> future = repeatWorker.schedule(task, delay, TimeUnit.MILLISECONDS);
+            return () -> future.cancel(false);
+        }, () -> TimeUnit.NANOSECONDS.toMillis(System.nanoTime()),
+            () -> ready && enabled() && prefs.getBoolean("raw_monitor_route_hdmi", true)
+                && VolumeRelay.get(this.context).ready(), this::emitVolume);
+
     }
 
     public static LocalAdbVolumeKeys get(Context context) {
@@ -90,6 +103,7 @@ public final class LocalAdbVolumeKeys {
         running = false;
         ready = false;
         generation++;
+        hold.stop();
         close(activeSocket);
         activeSocket = null;
         if (thread != null) thread.interrupt();
@@ -136,8 +150,7 @@ public final class LocalAdbVolumeKeys {
                     synchronized (this) {
                         if (!current(run)) return;
                         ready = true;
-                        pressed[0] = pressed[1] = false;
-                        lastKeyTime[0] = lastKeyTime[1] = 0;
+                        hold.stop();
                     }
                     state("Local volume key monitor connected");
                     ByteArrayOutputStream line = new ByteArrayOutputStream();
@@ -171,6 +184,7 @@ public final class LocalAdbVolumeKeys {
                     if (session != null) close(session.socket);
                     synchronized (this) {
                         if (run == generation) {
+                            hold.stop();
                             close(activeSocket);
                             activeSocket = null;
                             ready = false;
@@ -190,24 +204,31 @@ public final class LocalAdbVolumeKeys {
         }
     }
 
-    private void volumeLine(String line, long run) {
+    private synchronized void volumeLine(String line, long run) {
         if (!current(run)) return;
         Matcher match = KEY.matcher(line);
         if (!match.find()) return;
-        int index = "KEY_VOLUMEUP".equals(match.group(1)) ? 0 : 1;
+        VolumeKey key = "KEY_VOLUMEUP".equals(match.group(1)) ? VolumeKey.UP : VolumeKey.DOWN;
         String action = match.group(2);
-        if ("UP".equals(action) || "00000000".equals(action)) { pressed[index] = false; return; }
-        long now = SystemClock.elapsedRealtime();
-        boolean down = "DOWN".equals(action) || "00000001".equals(action);
-        if (!down && (!pressed[index] || now - lastKeyTime[index] < 150)) return;
-        pressed[index] = true;
-        lastKeyTime[index] = now;
-        if (!prefs.getBoolean("raw_monitor_route_hdmi", true)) return;
-        VolumeRelay.get(context).key(index == 0 ? VolumeKey.UP : VolumeKey.DOWN);
+        if ("UP".equals(action) || "00000000".equals(action)) { hold.up(key); return; }
+        if (!"DOWN".equals(action) && !"00000001".equals(action)) return;
+        if (!prefs.getBoolean("raw_monitor_route_hdmi", true)) { hold.stop(); return; }
+        if (!VolumeRelay.get(context).ready()) {
+            hold.stop();
+            VolumeRelay.get(context).key(key); // One reconnecting tap, never a queued hold burst.
+            return;
+        }
+        hold.down(key);
+    }
+
+    public void cancelHold() { hold.stop(); }
+
+    private void emitVolume(VolumeKey key) {
+        VolumeRelay.get(context).key(key);
         prefs.edit().putLong("last_key_at", System.currentTimeMillis())
                 .putInt("key_count", prefs.getInt("key_count", 0) + 1)
                 .putInt("raw_key_count", prefs.getInt("raw_key_count", 0) + 1).apply();
-        Log.i(TAG, "Local volume key received");
+        Log.i(TAG, "Local volume command sent: " + key);
     }
 
     private String selectRemote(String inventory) {

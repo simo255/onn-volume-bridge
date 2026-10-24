@@ -45,7 +45,9 @@ public final class VolumeService extends AccessibilityService {
 
     private void syncState() {
         if (prefs == null) return;
-        prefs.edit().putBoolean("raw_monitor_route_hdmi", hdmiOutput()).apply();
+        boolean hdmi = hdmiOutput();
+        prefs.edit().putBoolean("raw_monitor_route_hdmi", hdmi).apply();
+        if (!hdmi) LocalAdbVolumeKeys.get(this).cancelHold();
         boolean enabled = prefs.getBoolean("enabled", false) && VolumeRelay.get(this).configured();
         if (enabled) VolumeRelay.get(this).connect();
         else VolumeRelay.get(this).disconnect();

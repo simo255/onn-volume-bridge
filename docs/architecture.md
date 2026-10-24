@@ -3,7 +3,12 @@
 `LocalAdbVolumeKeys` authenticates only to the box's loopback ADB endpoint. It
 opens a read-only `getevent -pl` shell command, selects a remote interface through
 `InputDeviceSelector`, then listens to that node. It parses only volume up/down
-press/repeat/release and discards every other event without retaining it.
+press/release and discards every other event without retaining it.
+`VolumeHoldRepeater` emits the initial press, starts repeating after 250 ms at
+75 ms intervals, and stops on release, pause, route loss, connection loss or
+reader shutdown. Native repeat packets and duplicate down events do not double
+the cadence. A 10-second safety limit prevents a lost release event from leaving
+a volume key stuck; release and press again to start a new hold.
 
 Selection prefers the observed **Onn-Remote Keyboard** interface, even when the
 consumer-control interface advertises volume capabilities. Event numbers are

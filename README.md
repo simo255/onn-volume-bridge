@@ -4,7 +4,7 @@ Use the **onn remote's volume buttons to control the TV's own volume** when the
 built-in remote setup fails. Independent Android app, multiple TV protocols,
 local network only, no cloud accounts, no root, and no launcher replacement.
 
-[Français](README.fr.md) · [Setup](docs/setup.md) · [Compatibility](docs/compatibility.md) · [Architecture](docs/architecture.md)
+[FranÃ§ais](README.fr.md) Â· [Setup](docs/setup.md) Â· [Compatibility](docs/compatibility.md) Â· [Architecture](docs/architecture.md)
 
 ## Why it exists
 
@@ -23,16 +23,17 @@ another approach; the project does not claim support for every TV.
 
 | TV protocol | Implementation | Hardware validation |
 |---|---|---|
-| Samsung Tizen | Paired TLS WebSocket, pinned TV certificate | Original fix physically verified with onn 4K Pro / Android TV 12 and Samsung with TizenOS |
+| Samsung Tizen | Paired TLS WebSocket, pinned TV certificate | Independent-app core volume, mute and held-button release confirmed with Samsung / TizenOS |
 | Roku TV | ECP volume up/down/mute; TV endpoint verification | Experimental; protocol and local-server tests only |
 | Sony BRAVIA | Audio JSON-RPC with optional PSK, relative speaker volume and mute | Experimental; protocol tests only |
-| UPnP RenderingControl | Explicit local endpoint, 0–100 volume and mute | Experimental; read capability alone does not establish write support |
+| UPnP RenderingControl | Explicit local endpoint, 0â€“100 volume and mute | Experimental; read capability alone does not establish write support |
 
-The original Samsung-only fix worked on real hardware. **This extracted,
-independent app has not yet completed its own on-device acceptance run.** The
-other adapters need community hardware reports. LG webOS SSAP and other systems
-can be added through the adapter interface; they are not implemented in v0.1.0.
-See the [compatibility matrix](docs/compatibility.md) before enabling relaying.
+The independent app's core volume controls have now been checked with a real onn
+remote and a Samsung TV with TizenOS, including held buttons and release. The full
+acceptance checklist (including reboot, playback and headphones) is still pending.
+The other adapters need community hardware reports. LG webOS SSAP and other systems
+can be added through the adapter interface; they are not implemented yet.
+See the [compatibility matrix](docs/compatibility.md) and [scoped hardware report](docs/validation.md) before enabling relaying.
 
 The brand on the bezel is not the protocol: for example, a TCL or Hisense TV
 running Roku OS uses the Roku adapter. Android/Google TV by itself does not imply
@@ -50,7 +51,7 @@ flowchart LR
     B --> U[UPnP endpoint]
 ```
 
-- Volume +/− come from an authorized **loopback ADB** connection on the box.
+- Volume +/âˆ’ come from an authorized **loopback ADB** connection on the box.
 - Mute is filtered by an accessibility service; it cannot read screen contents.
 - The input reader discovers the event node by interface name and capabilities.
   It prefers **Onn-Remote Keyboard**, the interface observed carrying volume;
@@ -78,7 +79,7 @@ On Windows, use `gradlew.bat`. Set your own SDK location through Android Studio,
 3. Explicitly enable the relay, then use the app's three test buttons first.
 4. Enable **onn Volume Bridge** in the box's Accessibility settings.
 5. Approve the box's **USB debugging** request and tick **Always allow**.
-6. Keep remote **Volume control → Automatic (CEC)**. Keep the existing power setup.
+6. Keep remote **Volume control â†’ Automatic (CEC)**. Keep the existing power setup.
 7. Test the physical onn remote: only the TV's volume should change.
 
 Use the bridge when normal CEC volume does not work. If CEC already changes your
@@ -87,7 +88,7 @@ Keep the box and TV on the same LAN and debugging enabled. No PC is needed durin
 normal use after setup. Reboot/reconnect behavior still needs verification per
 firmware; **Reconnect TV and button reader** retries a stopped connection.
 
-[Detailed setup and recovery](docs/setup.md) · [optional desktop configuration tool](tools/configure.py)
+[Detailed setup and recovery](docs/setup.md) Â· [optional desktop configuration tool](tools/configure.py)
 
 ## Privacy and permissions
 
