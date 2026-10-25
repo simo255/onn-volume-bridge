@@ -8,7 +8,18 @@ The release includes SHA-256 checksums and the signing certificate fingerprint.
 Android TV 8.0 or newer is required. This is an early public preview; see
 [compatibility](compatibility.md) before installing.
 
-Transfer the APK to the onn using a USB drive or your usual file-transfer method,
+For a remote-only installation:
+
+1. Install [Downloader by AFTVnews](https://play.google.com/store/apps/details?id=com.esaba.downloader) from Google Play on the onn.
+2. Open Downloader, enter **`3237729`** and select **Go**. The code points to the official **v0.2.1 APK** on GitHub.
+3. Follow the download page, open the APK and choose **Install**. If Android asks,
+   allow installation from Downloader specifically, then return to the installer.
+4. Open **onn Volume Bridge** and follow the setup below.
+
+The same download is available at [aftv.news/3237729](https://aftv.news/3237729).
+This version-specific code does not automatically select future releases.
+
+Alternatively, transfer the APK to the onn using a USB drive or your usual file-transfer method,
 then open it with the Android package installer. If Android asks, allow installation
 from that specific installer/source. No PC build or ADB command is needed for this
 installation path. Do not bypass a firmware verification refusal.

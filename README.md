@@ -10,6 +10,14 @@ local network only, no cloud accounts, no root, and no launcher replacement.
 
 **[Download the APK — v0.2.1 preview](https://github.com/simo255/onn-volume-bridge/releases/download/v0.2.1/onn-volume-bridge-v0.2.1.apk)** · [Release notes and checksums](https://github.com/simo255/onn-volume-bridge/releases/tag/v0.2.1)
 
+**Easy install:** install [Downloader by AFTVnews](https://play.google.com/store/apps/details?id=com.esaba.downloader)
+on your onn and enter **`3237729`**. This code downloads **v0.2.1** from GitHub.
+Short link: [aftv.news/3237729](https://aftv.news/3237729).
+
+**Samsung/TizenOS is the only setup with recorded hardware checks. Other TV adapters
+are still experimental. Feedback and [compatibility reports](https://github.com/simo255/onn-volume-bridge/issues/new?template=compatibility.md)
+are appreciated**, including what works and what needs fixing. Please omit private addresses, credentials and raw logs.
+
 Install on your onn, choose your TV from **Find my TV**, then select
 **Set up my remote automatically**. Approve the Android prompts and try the remote.
 The app handles its own accessibility setup after local debugging approval and
