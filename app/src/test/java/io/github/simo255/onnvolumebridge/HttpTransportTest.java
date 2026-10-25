@@ -22,4 +22,13 @@ public class HttpTransportTest {
    assertThrows(java.io.IOException.class,()->new HttpTransport("127.0.0.1",server.port()).request("GET","/",Collections.emptyMap(),null));
   }
  }
+ @Test public void deniedHttpRequestKeepsTheStatusButNotPrivateResponseData()throws Exception {
+  String privateBody="private model serial token=SECRET 192.168.1.25";
+  try(FakeHttpServer server=new FakeHttpServer(r->new FakeHttpServer.Response(403,privateBody.getBytes(java.nio.charset.StandardCharsets.UTF_8),null))){
+   java.io.IOException error=assertThrows(java.io.IOException.class,()->new HttpTransport("127.0.0.1",server.port()).request("GET","/",Collections.emptyMap(),null));
+   SupportDiagnostics journal=new SupportDiagnostics(()->0);journal.failure(SupportDiagnostics.Source.TV,SupportDiagnostics.Operation.PROBE,error);
+   assertTrue(journal.snapshot().contains("TV/PROBE/HTTP_DENIED/403"));
+   assertFalse(journal.snapshot().contains(privateBody));assertFalse(journal.snapshot().contains("127.0.0.1"));
+  }
+ }
 }

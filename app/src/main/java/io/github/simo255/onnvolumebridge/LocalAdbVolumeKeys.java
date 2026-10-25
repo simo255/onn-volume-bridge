@@ -176,6 +176,7 @@ public final class LocalAdbVolumeKeys {
                     return;
                 } catch (Exception ignored) {
                     if (!current(run)) return;
+                    SupportDiagnostics.LIVE.failure(SupportDiagnostics.Source.READER,SupportDiagnostics.Operation.READ,ignored);
                     diagnostic("Local transport", ignored);
                     ready = false;
                     state(attempt == 2 ? "Local ADB unavailable; toggle relay to retry"
@@ -198,6 +199,7 @@ public final class LocalAdbVolumeKeys {
             }
         } catch (Exception ignored) {
             if (current(run)) {
+                SupportDiagnostics.LIVE.event(SupportDiagnostics.Source.READER,SupportDiagnostics.Kind.KEY_UNAVAILABLE);
                 diagnostic("Local private key", ignored);
                 state("Local ADB key unavailable (" + ignored.getClass().getSimpleName() + ")");
             }
@@ -407,6 +409,11 @@ public final class LocalAdbVolumeKeys {
     }
 
     private void state(String text) {
+        if("Connecting local key monitor".equals(text))SupportDiagnostics.LIVE.event(SupportDiagnostics.Source.READER,SupportDiagnostics.Kind.CONNECTING);
+        else if("Local volume key monitor connected".equals(text))SupportDiagnostics.LIVE.event(SupportDiagnostics.Source.READER,SupportDiagnostics.Kind.CONNECTED);
+        else if("Approve USB debugging for onn Volume on this box".equals(text))SupportDiagnostics.LIVE.event(SupportDiagnostics.Source.READER,SupportDiagnostics.Kind.APPROVAL_NEEDED);
+        else if("Onn keyboard volume input not found".equals(text))SupportDiagnostics.LIVE.event(SupportDiagnostics.Source.READER,SupportDiagnostics.Kind.INPUT_MISSING);
+        else if("Local key monitor stopped".equals(text))SupportDiagnostics.LIVE.event(SupportDiagnostics.Source.READER,SupportDiagnostics.Kind.DISCONNECTED);
         lastStatus = text;
         prefs.edit().putString("raw_status", text).apply();
         Log.i(TAG, text);

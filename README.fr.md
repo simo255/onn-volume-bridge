@@ -30,20 +30,20 @@ comme disponibles dans cette première version.
 
 ## Installation
 
-**[Télécharger l’APK — aperçu v0.2.1](https://github.com/simo255/onn-volume-bridge/releases/download/v0.2.1/onn-volume-bridge-v0.2.1.apk)** · [Notes et sommes de contrôle](https://github.com/simo255/onn-volume-bridge/releases/tag/v0.2.1)
-
-**Installation facile :** installez [Downloader by AFTVnews](https://play.google.com/store/apps/details?id=com.esaba.downloader)
-sur la onn et saisissez **`3237729`**. Ce code télécharge la **v0.2.1** depuis GitHub.
-Lien court : [aftv.news/3237729](https://aftv.news/3237729).
+**[Télécharger l’APK — aperçu v0.2.2](https://github.com/simo255/onn-volume-bridge/releases/download/v0.2.2/onn-volume-bridge-v0.2.2.apk)** · [Notes et sommes de contrôle](https://github.com/simo255/onn-volume-bridge/releases/tag/v0.2.2)
 
 **Samsung/TizenOS est le seul environnement ayant des vérifications matérielles consignées.
 Les autres adaptateurs TV restent expérimentaux. Tous vos retours et [rapports de compatibilité](https://github.com/simo255/onn-volume-bridge/issues/new?template=compatibility.md)
 sont appréciés**, que cela fonctionne ou non. Ne partagez pas d’adresses privées, d’identifiants ou de journaux bruts.
 
 Un problème ? **[Signalez-le sur GitHub](https://github.com/simo255/onn-volume-bridge/issues/new)**
-pour que je puisse regarder. Indiquez le modèle de votre onn, le modèle/système de
-la télé, la version de l’app, ce qui s’est passé et le résultat attendu.
+pour que je puisse regarder. Indiquez le système TV générique, la version de l’app,
+ce qui s’est passé et le résultat attendu. Les modèles exacts sont facultatifs.
 Ne partagez pas d’adresses privées, d’identifiants ou de journaux bruts.
+
+**Signaler un problème** affiche des diagnostics techniques génériques et propose
+un QR code pour copier le rapport sur Reddit ou ouvrir un brouillon GitHub.
+Les modèles exacts ne sont pas collectés automatiquement.
 
 Installez l’APK sur la onn, choisissez votre télé dans **Find my TV**,
 puis **Set up my remote automatically**. Autorisez les demandes Android et testez

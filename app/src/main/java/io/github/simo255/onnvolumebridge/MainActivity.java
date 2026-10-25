@@ -17,7 +17,7 @@ public final class MainActivity extends Activity {
     private final ExecutorService worker=Executors.newSingleThreadExecutor();
     private Spinner provider;
     private EditText host,port,psk,path,inputName;
-    private TextView status,progress,providerHelp,tvCheck,serviceCheck,readerCheck;
+    private TextView status,progress,providerHelp,tvCheck,serviceCheck,readerCheck,problemStatus;
     private Button save,discover,next,back,advancedToggle,manualTvToggle;
     private Switch enabled;
     private CheckBox cec;
@@ -67,6 +67,8 @@ public final class MainActivity extends Activity {
         back=button(footer,R.string.back,v->showStep(step-1));
         next=button(footer,R.string.next,v->{if(step==2){prefs.edit().putBoolean("setup_complete",true).apply();showStep(3);}else showStep(step+1);});
         back.setLayoutParams(new LinearLayout.LayoutParams(0,dp(52),1));next.setLayoutParams(new LinearLayout.LayoutParams(0,dp(52),1));
+        LinearLayout support=new LinearLayout(this);support.setPadding(dp(42),0,dp(42),dp(8));outer.addView(support);
+        Button report=button(support,R.string.report_problem,v->reportProblem());report.setLayoutParams(new LinearLayout.LayoutParams(-1,dp(48)));
         setContentView(outer);
         step=state!=null?state.getInt("setup_step",0):prefs.getBoolean("setup_complete",false)?3:0;
         showStep(step);
@@ -78,6 +80,7 @@ public final class MainActivity extends Activity {
         label(parent,R.string.connect_title,22);label(parent,R.string.connect_intro,17);
         discover=button(parent,R.string.find_tv,v->discover());
         tvCheck=label(parent,R.string.tv_not_connected,16);
+        problemStatus=label(parent,R.string.tv_not_connected,15);
         manualTvToggle=button(parent,R.string.manual_tv,v->showManualTv(manualTv.getVisibility()!=View.VISIBLE));
         manualTv=column(parent);manualTv.setVisibility(View.GONE);parent=manualTv;
         label(parent,R.string.provider_simple,16);provider=new Spinner(this);
@@ -156,7 +159,7 @@ public final class MainActivity extends Activity {
     private void automaticSetup() {
         if(automaticBusy)return;
         if(!VolumeRelay.get(this).configured()){toast(R.string.bad_config);return;}
-        automaticPending=true;
+        automaticPending=true;SupportDiagnostics.LIVE.event(SupportDiagnostics.Source.SETUP,SupportDiagnostics.Kind.STARTED);
         if(Settings.Global.getInt(getContentResolver(),Settings.Global.ADB_ENABLED,0)==0) {
             new AlertDialog.Builder(this).setTitle(R.string.enable_debug_title).setMessage(R.string.enable_debug_intro)
                 .setNegativeButton(R.string.cancel,(d,w)->automaticPending=false)
@@ -170,12 +173,13 @@ public final class MainActivity extends Activity {
                 handler.post(()->{
                     if(isFinishing() || isDestroyed())return;
                     automaticBusy=false;automaticPending=false;automatic.setEnabled(true);automatic.setText(R.string.auto_setup);
+                    SupportDiagnostics.LIVE.event(SupportDiagnostics.Source.SETUP,SupportDiagnostics.Kind.FINISHED);
                     advanceRemoteWhenReady=fixed;cec.setChecked(fixed);LocalAdbVolumeKeys.get(this).start();refreshState();
                     if(!fixed)new AlertDialog.Builder(this).setTitle(R.string.volume_mode_title).setMessage(R.string.volume_mode_help)
                         .setPositiveButton(R.string.remote_settings,(d,w)->{automaticPending=true;openRemoteSettings();})
                         .setNegativeButton(R.string.cancel,null).show();
                 });
-            }catch(Exception ignored){handler.post(()->{
+            }catch(Exception ignored){SupportDiagnostics.LIVE.failure(SupportDiagnostics.Source.SETUP,SupportDiagnostics.Operation.SETUP,ignored);handler.post(()->{
                 if(isFinishing() || isDestroyed())return;
                 automaticBusy=false;automaticPending=false;automatic.setEnabled(true);automatic.setText(R.string.auto_setup);
                 new AlertDialog.Builder(this).setTitle(R.string.auto_retry_title).setMessage(R.string.auto_retry_help)
@@ -229,6 +233,9 @@ public final class MainActivity extends Activity {
         tvCheck.setText(tv && savedForm()?R.string.tv_connected:R.string.tv_not_connected);
         serviceCheck.setText(service?R.string.accessibility_ready:R.string.accessibility_needed);
         readerCheck.setText(reader?R.string.reader_ready:R.string.reader_needed);
+        ProblemReport.Problem problem=reportState().problem();
+        problemStatus.setText(problemMessage(problem));
+        if(active && problem!=ProblemReport.Problem.READY)status.setText(problemMessage(problem));
         boolean ready=active && tv && service && reader && cec.isChecked();
         if(step==0 && advanceTvWhenReady && tv && savedForm()){advanceTvWhenReady=false;showStep(1);return;}
         if(step==1 && advanceRemoteWhenReady && ready){advanceRemoteWhenReady=false;showStep(2);return;}
@@ -248,7 +255,8 @@ public final class MainActivity extends Activity {
         discover.setEnabled(false);discover.setText(R.string.searching);
         worker.execute(()->{
             List<TvDiscovery.Candidate> results;
-            try{results=TvDiscovery.search();}catch(Exception ignored){results=Collections.emptyList();}
+            try{results=TvDiscovery.search();if(results.isEmpty())SupportDiagnostics.LIVE.event(SupportDiagnostics.Source.DISCOVERY,SupportDiagnostics.Kind.NO_RESULTS);}
+            catch(Exception ignored){SupportDiagnostics.LIVE.failure(SupportDiagnostics.Source.DISCOVERY,SupportDiagnostics.Operation.DISCOVER,ignored);results=Collections.emptyList();}
             final List<TvDiscovery.Candidate> found=results;
             handler.post(()->{
                 if(isFinishing() || isDestroyed())return;
@@ -289,7 +297,7 @@ public final class MainActivity extends Activity {
                 handler.post(()->{if(isFinishing() || isDestroyed())return;save.setEnabled(true);save.setText(R.string.save);
                     new AlertDialog.Builder(this).setTitle(R.string.trust_title).setMessage(getString(R.string.trust_help)+"\n\n"+candidate)
                         .setNegativeButton(R.string.cancel,null).setPositiveButton(R.string.approve,(dialog,which)->{pin=candidate;pinHost=address;persist(type,address);}).show();});
-            }catch(Exception e){handler.post(()->{if(!isFinishing() && !isDestroyed()){save.setEnabled(true);save.setText(R.string.save);toast(R.string.cert_failed);}});}});
+            }catch(Exception e){SupportDiagnostics.LIVE.failure(SupportDiagnostics.Source.TV,SupportDiagnostics.Operation.ENROLL,e);handler.post(()->{if(!isFinishing() && !isDestroyed()){save.setEnabled(true);save.setText(R.string.save);toast(R.string.cert_failed);}});}});
         }else persist(type,address);
     }
 
@@ -305,6 +313,87 @@ public final class MainActivity extends Activity {
         if(!VolumeRelay.get(this).ready()){toast(R.string.tv_waiting);return;}
         VolumeRelay.get(this).key(key);
     }
+    private ProblemReport.State reportState() {
+        android.content.SharedPreferences prefs=ConfigStore.prefs(this);
+        TargetConfig.Provider type=null;
+        try{type=TargetConfig.Provider.valueOf(prefs.getString("provider",""));}catch(IllegalArgumentException ignored){}
+        return new ProblemReport.State(type,VolumeRelay.get(this).configured(),savedForm(),prefs.getBoolean("enabled",false),
+            VolumeRelay.get(this).setupConnectionRequested(),VolumeRelay.get(this).ready(),accessibilityEnabled(),
+            LocalAdbVolumeKeys.get(this).ready(),cec.isChecked(),prefs.contains("raw_monitor_route_hdmi")?prefs.getBoolean("raw_monitor_route_hdmi",false):null,
+            step,VolumeRelay.get(this).status(),LocalAdbVolumeKeys.status());
+    }
+    private void reportProblem() {
+        ProblemReport.State snapshot=reportState();
+        String version="unknown";
+        try{version=getPackageManager().getPackageInfo(getPackageName(),0).versionName;}catch(android.content.pm.PackageManager.NameNotFoundException ignored){}
+        String report=ProblemReport.create(snapshot,version,Build.VERSION.SDK_INT,SupportDiagnostics.LIVE),url=ProblemReport.issueUrl(snapshot,report);
+        ScrollView scrollReport=new ScrollView(this);LinearLayout body=new LinearLayout(this);body.setOrientation(LinearLayout.VERTICAL);
+        body.setPadding(dp(24),dp(8),dp(24),dp(8));scrollReport.addView(body);
+        label(body,R.string.report_intro,17);
+        TextView advice=label(body,R.string.report_problem,18);
+        advice.setText(problemMessage(snapshot.problem()));
+        TextView preview=label(body,R.string.report_problem,14);preview.setTypeface(android.graphics.Typeface.MONOSPACE);preview.setText(report);
+        AlertDialog dialog=new AlertDialog.Builder(this).setTitle(R.string.report_problem).setView(scrollReport)
+            .setPositiveButton(R.string.report_phone,(d,w)->chooseReportPhone(report,url))
+            .setNeutralButton(R.string.report_copy,null).setNegativeButton(R.string.report_close,null).create();
+        dialog.setOnShowListener(d->{styleDialogButtons(dialog);
+            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v->{
+                android.content.ClipboardManager clipboard=(android.content.ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+                clipboard.setPrimaryClip(ClipData.newPlainText(getString(R.string.report_problem),report));toast(R.string.report_copied);
+            });});
+        dialog.show();dialog.getWindow().setLayout(Math.min(getResources().getDisplayMetrics().widthPixels-dp(48),dp(900)),-2);
+    }
+    private void chooseReportPhone(String report,String url) {
+        LinearLayout body=new LinearLayout(this);body.setOrientation(LinearLayout.VERTICAL);body.setPadding(dp(24),dp(8),dp(24),dp(8));
+        AlertDialog dialog=new AlertDialog.Builder(this).setTitle(R.string.report_phone).setView(body).setNegativeButton(R.string.report_close,null).create();
+        button(body,R.string.report_phone_text,v->{dialog.dismiss();showReportQr(report,url,false);});
+        button(body,R.string.report_phone_github,v->{dialog.dismiss();showReportQr(report,url,true);});
+        dialog.setOnShowListener(d->styleDialogButtons(dialog));dialog.show();
+    }
+    private void showReportQr(String report,String url,boolean github) {
+        LinearLayout body=new LinearLayout(this);body.setPadding(dp(24),dp(12),dp(24),dp(12));body.setGravity(Gravity.CENTER_VERTICAL);
+        try {
+            com.google.zxing.common.BitMatrix qr=ReportQr.encode(github?url:report);
+            int available=Math.min(dp(300),getResources().getDisplayMetrics().heightPixels-dp(160));
+            int scale=Math.max(1,available/qr.getWidth()),size=qr.getWidth()*scale;
+            int[] pixels=new int[size*size];
+            for(int y=0;y<size;y++)for(int x=0;x<size;x++)pixels[y*size+x]=qr.get(x/scale,y/scale)?Color.BLACK:Color.WHITE;
+            android.graphics.Bitmap bitmap=android.graphics.Bitmap.createBitmap(pixels,size,size,android.graphics.Bitmap.Config.RGB_565);
+            ImageView image=new ImageView(this);image.setImageBitmap(bitmap);image.setContentDescription(getString(github?R.string.report_qr_description:R.string.report_text_qr_description));
+            body.addView(image,new LinearLayout.LayoutParams(size,size));
+        }catch(Exception ignored){toast(R.string.report_qr_failed);}
+        LinearLayout instructions=column(body);instructions.setPadding(dp(24),0,0,0);
+        instructions.setLayoutParams(new LinearLayout.LayoutParams(0,-2,1));label(instructions,github?R.string.report_phone_help:R.string.report_phone_text_help,18);
+        AlertDialog dialog=new AlertDialog.Builder(this).setTitle(R.string.report_phone).setView(body)
+            .setPositiveButton(github?R.string.report_open_tv:R.string.report_phone_github,(d,w)->{
+                if(!github){showReportQr(report,url,true);return;}
+                try{startActivity(new Intent(Intent.ACTION_VIEW,android.net.Uri.parse(url)));}catch(RuntimeException ignored){toast(R.string.report_no_browser);}
+            }).setNegativeButton(R.string.report_close,null).create();
+        dialog.setOnShowListener(d->styleDialogButtons(dialog));dialog.show();
+        dialog.getWindow().setLayout(Math.min(getResources().getDisplayMetrics().widthPixels-dp(48),dp(900)),-2);
+    }
+    private void styleButton(Button button) {
+        button.setBackgroundTintList(getColorStateList(R.color.button_background));button.setTextColor(getColorStateList(R.color.button_text));
+    }
+    private String problemMessage(ProblemReport.Problem problem) {
+        int message=problem.message;
+        SupportDiagnostics.Kind failure=SupportDiagnostics.LIVE.lastFailure(SupportDiagnostics.Source.TV);
+        if((problem==ProblemReport.Problem.TV_FAILED || problem==ProblemReport.Problem.TV_DISCONNECTED) && failure!=null) {
+            switch(failure) {
+                case TIMEOUT:message=R.string.problem_tv_timeout;break;
+                case CERTIFICATE:case TLS:message=R.string.problem_tv_certificate;break;
+                case HTTP_DENIED:message=R.string.problem_tv_denied;break;
+                case INCOMPATIBLE:message=R.string.problem_tv_incompatible;break;
+                default:break;
+            }
+        }
+        return getString(R.string.report_code_message,problem.code,getString(message));
+    }
+    private void styleDialogButtons(AlertDialog dialog) {
+        for(int which:new int[]{AlertDialog.BUTTON_POSITIVE,AlertDialog.BUTTON_NEGATIVE,AlertDialog.BUTTON_NEUTRAL}) {
+            Button button=dialog.getButton(which);if(button!=null)styleButton(button);
+        }
+    }
     private void openRemoteSettings() {
         try{startActivity(new Intent("android.settings.SLICE_SETTINGS").putExtra("slice_uri","content://com.google.android.tv.axel.sliceprovider/main"));}
         catch(RuntimeException e){open(new Intent(Settings.ACTION_SETTINGS));}
@@ -315,7 +404,7 @@ public final class MainActivity extends Activity {
     private LinearLayout column(LinearLayout parent){LinearLayout v=new LinearLayout(this);v.setOrientation(LinearLayout.VERTICAL);parent.addView(v);return v;}
     private TextView label(LinearLayout parent,int text,int size){TextView v=new TextView(this);v.setText(text);v.setTextSize(size);v.setTextColor(Color.WHITE);v.setPadding(0,dp(5),0,dp(5));parent.addView(v);return v;}
     private EditText edit(LinearLayout parent,int hint,int type){EditText v=new EditText(this);v.setHint(hint);v.setInputType(type);v.setSingleLine(true);v.setTextColor(Color.WHITE);v.setHintTextColor(Color.LTGRAY);v.setTextSize(18);v.setMinHeight(dp(48));parent.addView(v);return v;}
-    private Button button(LinearLayout parent,int text,View.OnClickListener click){Button v=new Button(this);v.setText(text);v.setTextSize(16);v.setMinHeight(dp(48));v.setBackgroundTintList(getColorStateList(R.color.button_background));v.setTextColor(getColorStateList(R.color.button_text));v.setOnClickListener(click);parent.addView(v);return v;}
+    private Button button(LinearLayout parent,int text,View.OnClickListener click){Button v=new Button(this);v.setText(text);v.setTextSize(16);v.setMinHeight(dp(48));styleButton(v);v.setOnClickListener(click);parent.addView(v);return v;}
     @Override public void onBackPressed(){if(step>0 && step<3)showStep(step-1);else super.onBackPressed();}
     @Override protected void onSaveInstanceState(Bundle out){out.putBoolean("automatic_pending",automaticPending);out.putInt("setup_step",step);out.putBoolean("setup_connection",VolumeRelay.get(this).setupConnectionRequested());out.putBoolean("manual_tv",manualTv.getVisibility()==View.VISIBLE);out.putBoolean("advanced_open",advancedOpen);super.onSaveInstanceState(out);}
     @Override protected void onResume(){super.onResume();handler.removeCallbacks(refresh);handler.post(refresh);if(automaticPending && !automaticBusy && Settings.Global.getInt(getContentResolver(),Settings.Global.ADB_ENABLED,0)!=0)automaticSetup();}

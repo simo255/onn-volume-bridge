@@ -7,8 +7,8 @@ android {
         applicationId 'io.github.simo255.onnvolumebridge'
         minSdk 26
         targetSdk 34
-        versionCode 10
-        versionName '0.2.1'
+        versionCode 11
+        versionName '0.2.2'
     }
     signingConfigs {
         if (publishedStore) {
@@ -25,6 +25,7 @@ android {
     lint { disable 'ExpiredTargetSdkVersion' }
 }
 dependencies {
+    implementation 'com.google.zxing:core:3.5.4'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.json:json:20240303'
 }

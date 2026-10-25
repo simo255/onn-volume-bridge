@@ -13,10 +13,12 @@ public class HttpTransport {
         for(Map.Entry<String,String> header:headers.entrySet())c.setRequestProperty(header.getKey(),header.getValue());
         try {
             if(body!=null){c.setDoOutput(true);byte[] data=body.getBytes(StandardCharsets.UTF_8);c.setFixedLengthStreamingMode(data.length);try(OutputStream out=c.getOutputStream()){out.write(data);}}
-            int code=c.getResponseCode();if(code<200 || code>=300)throw new IOException("TV returned HTTP "+code);
+            int code=c.getResponseCode();if(code<200 || code>=300)throw new SupportDiagnostics.Failure(
+                code==401 || code==403?SupportDiagnostics.Kind.HTTP_DENIED:code==404?SupportDiagnostics.Kind.HTTP_NOT_FOUND:
+                code>=300 && code<400?SupportDiagnostics.Kind.HTTP_REDIRECT:code>=500?SupportDiagnostics.Kind.HTTP_SERVER:SupportDiagnostics.Kind.HTTP_OTHER,code);
             try(InputStream in=c.getInputStream();ByteArrayOutputStream out=new ByteArrayOutputStream()) {
                 byte[] block=new byte[2048];int n;
-                while((n=in.read(block))!=-1){if(out.size()+n>65536)throw new IOException("TV response too large");out.write(block,0,n);}
+                while((n=in.read(block))!=-1){if(out.size()+n>65536)throw new SupportDiagnostics.Failure(SupportDiagnostics.Kind.RESPONSE_TOO_LARGE);out.write(block,0,n);}
                 return out.toString("UTF-8");
             }
         } finally { c.disconnect(); }

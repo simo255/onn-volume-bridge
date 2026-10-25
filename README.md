@@ -8,19 +8,19 @@ local network only, no cloud accounts, no root, and no launcher replacement.
 
 ## Download and setup
 
-**[Download the APK — v0.2.1 preview](https://github.com/simo255/onn-volume-bridge/releases/download/v0.2.1/onn-volume-bridge-v0.2.1.apk)** · [Release notes and checksums](https://github.com/simo255/onn-volume-bridge/releases/tag/v0.2.1)
-
-**Easy install:** install [Downloader by AFTVnews](https://play.google.com/store/apps/details?id=com.esaba.downloader)
-on your onn and enter **`3237729`**. This code downloads **v0.2.1** from GitHub.
-Short link: [aftv.news/3237729](https://aftv.news/3237729).
+**[Download the APK — v0.2.2 preview](https://github.com/simo255/onn-volume-bridge/releases/download/v0.2.2/onn-volume-bridge-v0.2.2.apk)** · [Release notes and checksums](https://github.com/simo255/onn-volume-bridge/releases/tag/v0.2.2)
 
 **Samsung/TizenOS is the only setup with recorded hardware checks. Other TV adapters
 are still experimental. Feedback and [compatibility reports](https://github.com/simo255/onn-volume-bridge/issues/new?template=compatibility.md)
 are appreciated**, including what works and what needs fixing. Please omit private addresses, credentials and raw logs.
 
 Found an issue? **[Report it on GitHub](https://github.com/simo255/onn-volume-bridge/issues/new)**
-so I can take a look. Include your onn model, TV model/OS, app version, what happened
-and what you expected. Keep private addresses, credentials and raw logs out of the report.
+so I can take a look. Include the app version, generic TV system, what happened
+and what you expected. Exact device/TV models are optional. Keep private addresses,
+credentials and raw logs out of the report.
+
+**Report a problem** previews generic technical diagnostics and offers phone QR
+sharing for Reddit or a GitHub draft. See [how reporting works](docs/setup.md#reporting-a-problem).
 
 Install on your onn, choose your TV from **Find my TV**, then select
 **Set up my remote automatically**. Approve the Android prompts and try the remote.
@@ -143,8 +143,8 @@ No analytics, screen recording, typed-text logging or public-network service.
 
 ## Development and contribution
 
-There are no runtime dependencies beyond Android/Java APIs. JUnit and JSON are
-used only in JVM tests. A signed public preview APK is available in GitHub Releases.
+ZXing core generates report QR codes locally; the remaining runtime uses Android/Java APIs.
+JUnit and JSON are used only in JVM tests. A signed public preview APK is available in GitHub Releases.
 Local builds use the builder's developer identity by default; published builds can
 use an external private keystore. See [build and signing](docs/setup.md#build-from-source-or-configure-from-a-computer).
 

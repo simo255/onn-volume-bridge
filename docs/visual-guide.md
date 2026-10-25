@@ -1,14 +1,11 @@
 # Set up in three steps
 
-For the easiest remote-only install, use **Downloader by AFTVnews** on the onn and
-enter **`3237729`**. This code points to the official v0.2.1 APK on GitHub.
-See [installation instructions](setup.md#download) if Android asks for permission.
-
-Or install the [v0.2.1 preview APK](https://github.com/simo255/onn-volume-bridge/releases/download/v0.2.1/onn-volume-bridge-v0.2.1.apk)
+Install the [v0.2.2 preview APK](https://github.com/simo255/onn-volume-bridge/releases/download/v0.2.2/onn-volume-bridge-v0.2.2.apk)
 on your onn and open **onn Volume Bridge**. Keep your TV on and connected to the
 same Wi-Fi or home network. Use this bridge when normal CEC volume setup fails.
 
-These screenshots show the app on an already paired onn and Samsung/TizenOS TV.
+The four setup screenshots show v0.2.1 on an already paired onn and Samsung/TizenOS TV.
+In v0.2.2, a Report a problem button is also available at the bottom of every screen.
 On a first installation, Android permissions and TV approval are still required.
 An amber button is focused: press **OK** to select it.
 
@@ -62,3 +59,20 @@ Samsung core volume, mute and hold/release have recorded hardware checks. Full
 reboot, playback/headphones and network recovery acceptance remain pending.
 Roku, Sony and UPnP have protocol tests, not hardware acceptance reports.
 See [compatibility](compatibility.md) and [detailed setup and recovery](setup.md).
+
+## Share a problem from your phone
+
+Choose **Report a problem** and review the generic report. It contains error codes,
+app/Android versions, safe failure categories and recent status changes, with no
+exact model IDs, addresses, credentials or raw logs. Add exact models only if you
+choose to when writing your comment or issue.
+
+![Generic report preview in an isolated emulator, with no identifying device information](images/report-preview.png)
+
+Choose **Use my phone (QR code)**. For Reddit, choose **Copy text for Reddit or other
+apps**, scan the text QR with a reader offering Copy text, then paste into your
+comment. For GitHub, choose **Open a GitHub issue draft**, scan and review the
+prefilled draft on your phone, describe what happened and submit it yourself.
+
+The report preview above is an emulator example. Nothing is uploaded or posted
+automatically. See [reporting details](setup.md#reporting-a-problem).

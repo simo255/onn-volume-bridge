@@ -12,3 +12,8 @@ Sony Audio API: https://pro-bravia.sony.net/ja/remote-display-control/rest-api/r
 ADB protocol: https://android.googlesource.com/platform/packages/modules/adb/+/refs/heads/main/OVERVIEW.TXT
 
 No affiliation with Walmart/onn, Google, Samsung, Roku or Sony is implied.
+
+On-device report QR generation uses ZXing core 3.5.4 by the ZXing authors,
+licensed under the Apache License, Version 2.0. The license is bundled in
+app/src/main/assets/licenses/zxing-LICENSE.txt and in the APK assets.
+QR generation does not contact ZXing or an external QR-hosting service.

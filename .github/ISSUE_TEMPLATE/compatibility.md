@@ -7,9 +7,9 @@ assignees: ''
 ---
 
 - App version / commit:
-- onn model:
-- Android version and firmware build:
-- TV model and TV operating system:
+- Device family (for example, onn streaming device; exact model optional):
+- Android version (optional; no firmware/device identifiers needed):
+- TV system (for example, Samsung/TizenOS; exact model optional):
 - Selected protocol:
 - App test buttons: volume up / down / mute:
 - Physical onn buttons: volume up / down / mute:
@@ -22,4 +22,6 @@ assignees: ''
 
 Please do not attach IP addresses, account names, tokens, certificates, ADB keys,
 raw input captures, full logcat, settings dumps or device backups. Share only a
-short sanitized error/status and the non-identifying model/firmware details above.
+short sanitized error/status and the generic device/TV information above.
+Exact model numbers are optional: include them only if you want to share them.
+You can paste the generic report from the app instead of filling device details.

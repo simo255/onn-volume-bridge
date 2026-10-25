@@ -2,24 +2,14 @@
 
 ## Download
 
-Download [onn-volume-bridge-v0.2.1.apk](https://github.com/simo255/onn-volume-bridge/releases/download/v0.2.1/onn-volume-bridge-v0.2.1.apk)
-from the [v0.2.1 preview release](https://github.com/simo255/onn-volume-bridge/releases/tag/v0.2.1).
+Download [onn-volume-bridge-v0.2.2.apk](https://github.com/simo255/onn-volume-bridge/releases/download/v0.2.2/onn-volume-bridge-v0.2.2.apk)
+from the [v0.2.2 preview release](https://github.com/simo255/onn-volume-bridge/releases/tag/v0.2.2).
 The release includes SHA-256 checksums and the signing certificate fingerprint.
 Android TV 8.0 or newer is required. This is an early public preview; see
 [compatibility](compatibility.md) before installing.
 
-For a remote-only installation:
-
-1. Install [Downloader by AFTVnews](https://play.google.com/store/apps/details?id=com.esaba.downloader) from Google Play on the onn.
-2. Open Downloader, enter **`3237729`** and select **Go**. The code points to the official **v0.2.1 APK** on GitHub.
-3. Follow the download page, open the APK and choose **Install**. If Android asks,
-   allow installation from Downloader specifically, then return to the installer.
-4. Open **onn Volume Bridge** and follow the setup below.
-
-The same download is available at [aftv.news/3237729](https://aftv.news/3237729).
-This version-specific code does not automatically select future releases.
-
-Alternatively, transfer the APK to the onn using a USB drive or your usual file-transfer method,
+Open the release page in Downloader by AFTVnews on the onn and select the APK
+under **Assets**, or transfer the APK using a USB drive or your usual file-transfer method,
 then open it with the Android package installer. If Android asks, allow installation
 from that specific installer/source. No PC build or ADB command is needed for this
 installation path. Do not bypass a firmware verification refusal.
@@ -30,6 +20,37 @@ identity preserves saved pairing. The package is `io.github.simo255.onnvolumebri
 ## The short setup flow
 
 Prefer pictures? **[Follow the screenshot guide](visual-guide.md)** for the three setup steps and ready screen.
+
+## Reporting a problem
+
+**Report a problem** is at the bottom of every setup screen and the ready screen.
+It explains the current status with an `OVB-` code and previews a generic report.
+No exact model numbers/IDs, device names, firmware identifiers, addresses,
+credentials, typed input or raw logs are collected for the report.
+It includes the app version, Android API level, generic TV system, setup step,
+permission/connection/audio checks, the last safe failure category per component
+(including the failing operation and an HTTP status number when applicable), and up to six recent technical
+state transitions. Event ages are relative seconds, not dates or wall-clock times.
+This bounded history exists only in memory for the current process; restarting
+the app clears it. Exception messages, stack traces and response bodies are never
+included. Open the report while the problem is happening when possible.
+
+Choose **Use my phone (QR code)**, then one of these options:
+
+- **Copy text for Reddit or other apps:** scan the text QR using a reader that
+  supports copying decoded text, tap Copy on the phone and paste into your Reddit
+  comment. Some camera apps need a QR reader such as Google Lens for text codes.
+  The QR is generated locally; this option needs no GitHub account or upload.
+- **Open a GitHub issue draft:** scan the QR to open GitHub with the same report
+  already filled in. Sign in if needed, describe the problem and submit it yourself.
+  Opening the link sends only that reviewed generic report to GitHub; nothing is
+  posted automatically. Exact device/TV models can be added voluntarily on GitHub.
+
+**Copy report on this TV** is an alternative for a browser on the onn. Its clipboard
+is separate from your phone: copying on the TV does not copy to your phone.
+No third-party QR service, shortener or background diagnostic upload is used.
+
+## Setup steps
 
 The app opens in English by default, even when Android is in another language.
 Choose English or French with **Language / Langue** at the top of the app, before setup.

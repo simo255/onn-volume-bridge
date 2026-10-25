@@ -96,3 +96,33 @@ enrollment or completion of the full hardware acceptance checklist.
 Release checks: 57 JVM tests passed; release lint completed with zero errors and
 five warnings; the signed APK was built and its certificate checked against the
 previous public preview. No broader hardware support is inferred.
+
+## v0.2.2 preview: generic problem reports
+
+This preview adds predefined error explanations, a generic report preview,
+TV-local clipboard copy, a plain-text QR for Reddit/other apps, and a QR for a
+prefilled GitHub issue draft. QR encoding runs locally. No report is automatically
+uploaded or posted. Exact model IDs, device names, addresses, credentials, raw
+exception messages, response bodies and device logs are excluded by construction.
+Users may voluntarily add exact models when editing a report on their phone.
+
+Reports include the app version, Android API level, selected generic TV system,
+setup step, connection/permission/audio checks, the last safe failure per component
+and up to six in-memory technical events with relative ages. Failure categories
+and operations are enum values; only bounded HTTP status numbers are retained.
+This diagnostic context is cleared when the process restarts.
+
+Validation: 69 JVM tests passed; release lint completed with zero errors and five
+warnings; the release APK built with the QR library license bundled. Tests cover
+private text in exception messages and nested errors, certificate categorization,
+bounded/deduplicated event history, HTTP denial reporting, draft URL encoding and
+QR decode round trips. Both QR types were also decoded from emulator screenshots
+and verified to carry the same reviewed report.
+
+In a fresh, isolated Android emulator, a loopback fake Roku endpoint returned HTTP
+403 with a private marker in its response. The app report retained
+`TV/PROBE/HTTP_DENIED/403`, while excluding the fake endpoint and private marker.
+Report preview, clipboard action and phone-sharing controls were inspected there.
+No GitHub issue or Reddit comment was submitted. No installed physical TV was
+changed for this source work; real-phone scanning and physical onn acceptance of
+this new UI remain unverified. The v0.2.2 APK includes this feature; the v0.2.1 APK does not.

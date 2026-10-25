@@ -174,6 +174,7 @@ public final class SamsungRemote {
             close(raw);
             synchronized (this) {
                 if (attempt == generation) {
+                    SupportDiagnostics.LIVE.failure(SupportDiagnostics.Source.TV,SupportDiagnostics.Operation.CONNECT,ignored);
                     connecting = false;
                     connected = false;
                     socket = null;
@@ -268,6 +269,7 @@ public final class SamsungRemote {
             }
         } catch (Exception ignored) {
             // Never log payloads, IP addresses, certificate fingerprints or pairing tokens.
+            synchronized(this){if(isCurrent(target,attempt))SupportDiagnostics.LIVE.failure(SupportDiagnostics.Source.TV,SupportDiagnostics.Operation.READ,ignored);}
         } finally {
             close(target);
             synchronized (this) {
@@ -334,6 +336,7 @@ public final class SamsungRemote {
                 close(target);
                 synchronized (this) {
                     if (socket == target) {
+                        SupportDiagnostics.LIVE.failure(SupportDiagnostics.Source.TV,SupportDiagnostics.Operation.COMMAND,ignored);
                         connected = false;
                         connecting = false;
                         pending.clear();
@@ -378,6 +381,10 @@ public final class SamsungRemote {
     }
 
     private void state(String value) {
+        if("Connecting".equals(value))SupportDiagnostics.LIVE.event(SupportDiagnostics.Source.TV,SupportDiagnostics.Kind.CONNECTING);
+        else if("Connected".equals(value))SupportDiagnostics.LIVE.event(SupportDiagnostics.Source.TV,SupportDiagnostics.Kind.CONNECTED);
+        else if("Waiting for TV approval".equals(value) || "TV approval required".equals(value))SupportDiagnostics.LIVE.event(SupportDiagnostics.Source.TV,SupportDiagnostics.Kind.APPROVAL_NEEDED);
+        else if(value.startsWith("Disconnected"))SupportDiagnostics.LIVE.event(SupportDiagnostics.Source.TV,SupportDiagnostics.Kind.DISCONNECTED);
         lastStatus = value;
         prefs.edit().putString("status", value).apply();
         Log.i(TAG, value);
