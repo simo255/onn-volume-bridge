@@ -4,10 +4,19 @@ import android.content.Context;
 final class VolumeRelay {
     private static VolumeRelay instance;
     private final Context context;private VolumeTarget target;private long revision=Long.MIN_VALUE;
+    private boolean setupConnection;
     private VolumeRelay(Context c){context=c.getApplicationContext();}
     static synchronized VolumeRelay get(Context c){if(instance==null)instance=new VolumeRelay(c);return instance;}
     synchronized boolean configured(){try{ConfigStore.load(context);return true;}catch(RuntimeException e){return false;}}
     synchronized void connect(){VolumeTarget t=target();if(t!=null)t.connect();}
+    /** Pairing is allowed while forwarding remains explicitly disabled. */
+    synchronized void connectForSetup(){setupConnection=true;connect();}
+    synchronized boolean setupConnectionRequested(){return setupConnection;}
+    synchronized void disconnectUnlessSetup(){if(!setupConnection)disconnect();}
+    synchronized void finishSetupConnection(){
+        setupConnection=false;
+        if(!ConfigStore.prefs(context).getBoolean("enabled",false))disconnect();
+    }
     synchronized boolean ready(){return target!=null && target.ready();}
     synchronized String status(){return target==null?"Choose and configure a TV":target.status();}
     synchronized void key(VolumeKey key) {
@@ -16,7 +25,7 @@ final class VolumeRelay {
     }
     synchronized boolean startHold(VolumeKey key) { VolumeTarget t=target(); return t!=null && t.startHold(key); }
     synchronized void endHold() { if(target!=null)target.endHold(); }
-    synchronized void disconnect(){if(target!=null)target.close();target=null;revision=Long.MIN_VALUE;}
+    synchronized void disconnect(){setupConnection=false;if(target!=null)target.close();target=null;revision=Long.MIN_VALUE;}
     private VolumeTarget target() {
         long current=ConfigStore.prefs(context).getLong("config_revision",0);
         if(target!=null && revision==current)return target;

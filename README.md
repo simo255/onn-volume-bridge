@@ -8,14 +8,23 @@ local network only, no cloud accounts, no root, and no launcher replacement.
 
 ## Download and setup
 
-**[Download the APK — v0.2.0 preview](https://github.com/simo255/onn-volume-bridge/releases/download/v0.2.0/onn-volume-bridge-v0.2.0.apk)** · [Release notes and checksums](https://github.com/simo255/onn-volume-bridge/releases/tag/v0.2.0)
+**[Download the APK — v0.2.1 preview](https://github.com/simo255/onn-volume-bridge/releases/download/v0.2.1/onn-volume-bridge-v0.2.1.apk)** · [Release notes and checksums](https://github.com/simo255/onn-volume-bridge/releases/tag/v0.2.1)
 
-Install on your onn, choose your TV from **Find TVs on my network**, then select
+Install on your onn, choose your TV from **Find my TV**, then select
 **Set up my remote automatically**. Approve the Android prompts and try the remote.
 The app handles its own accessibility setup after local debugging approval and
 checks fixed HDMI volume. It opens remote settings only if a manual step remains.
-English is the default; French is available in Advanced options. No PC is needed
+English is the default; the language selector at the top also offers French. No PC is needed
 for normal use. See [setup and recovery](docs/setup.md) for installation and limits.
+
+### Setup at a glance
+
+| 1. Find your TV | 2. Authorize your remote | 3. Try the buttons |
+|---|---|---|
+| ![Find my TV screen](docs/images/setup-01-tv.png) | ![Automatic remote setup screen](docs/images/setup-02-remote.png) | ![Volume and mute test screen](docs/images/setup-03-test.png) |
+| Choose your TV from the local network results. | Follow the app and Android permission prompts. | Test the app buttons and your real onn remote. |
+
+**[Follow the screenshot guide →](docs/visual-guide.md)** · Amber buttons show which action is focused.
 
 ## Why it exists
 

@@ -73,3 +73,26 @@ Build verification: 57 JVM tests passed, lint passed with zero errors, and the
 release APK compiled. Tests include discovery filtering and injection-resistant
 accessibility-list merging that preserves other services. The full acceptance
 limits above still apply.
+
+## v0.2.1 setup usability and pairing fix
+
+Buttons now use amber focus/hover states, language selection is at the top of the
+app, and the TV step starts with discovery instead of a required system/address
+form. Manual setup remains available; unknown discovery results require an
+explicit system choice. Sony credentials and UPnP endpoints remain manual.
+
+An enabled accessibility service previously closed an explicit TV setup connection
+when forwarding was paused. Setup now retains that connection without enabling
+forwarding, and releases it when setup ends or the user explicitly disconnects.
+On the existing authorized onn/Samsung installation, saving while paused reached
+Samsung approval, connected, and advanced to the remote step. This was checked
+after installing the fix with matching-signature update; app data was retained.
+
+The four documentation screenshots show only the app UI on that already paired
+installation. They exclude addresses, certificates, tokens, account information
+and device identifiers. They are navigation examples, not evidence of fresh-device
+enrollment or completion of the full hardware acceptance checklist.
+
+Release checks: 57 JVM tests passed; release lint completed with zero errors and
+five warnings; the signed APK was built and its certificate checked against the
+previous public preview. No broader hardware support is inferred.

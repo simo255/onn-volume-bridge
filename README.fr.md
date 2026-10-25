@@ -30,16 +30,26 @@ comme disponibles dans cette première version.
 
 ## Installation
 
-**[Télécharger l’APK — aperçu v0.2.0](https://github.com/simo255/onn-volume-bridge/releases/download/v0.2.0/onn-volume-bridge-v0.2.0.apk)** · [Notes et sommes de contrôle](https://github.com/simo255/onn-volume-bridge/releases/tag/v0.2.0)
+**[Télécharger l’APK — aperçu v0.2.1](https://github.com/simo255/onn-volume-bridge/releases/download/v0.2.1/onn-volume-bridge-v0.2.1.apk)** · [Notes et sommes de contrôle](https://github.com/simo255/onn-volume-bridge/releases/tag/v0.2.1)
 
-Installez l’APK sur la onn, choisissez votre télé dans **Find TVs on my network**,
+Installez l’APK sur la onn, choisissez votre télé dans **Find my TV**,
 puis **Set up my remote automatically**. Autorisez les demandes Android et testez
 la vraie télécommande. L’app active son service de volume après votre autorisation
 de débogage local et vérifie le volume HDMI. Un réglage manuel reste nécessaire
 uniquement si le système ne permet pas de le vérifier ou de l’appliquer.
 
 L’app s’ouvre en anglais par défaut, même sur une box en français. Le français
-reste disponible dans **Advanced options → App language**.
+se choisit avec **Language / Langue** en haut de l’app, avant la configuration.
 Les étapes de débogage et d’appairage imposées par Android et la télé ne peuvent
 pas être acceptées silencieusement par l’app. Aucun PC n’est nécessaire à l’usage.
 Voir le [guide de configuration](docs/setup.md) pour les détails et limites.
+
+### La configuration en images
+
+| 1. Trouver la télé | 2. Autoriser la télécommande | 3. Tester les boutons |
+|---|---|---|
+| ![Recherche de la télé](docs/images/setup-01-tv.png) | ![Configuration automatique de la télécommande](docs/images/setup-02-remote.png) | ![Test du volume et de Muet](docs/images/setup-03-test.png) |
+| Choisissez votre télé dans les résultats du réseau local. | Suivez les demandes de l’app et d’Android. | Testez les boutons de l’app et la vraie télécommande onn. |
+
+**[Guide illustré pas à pas, en anglais →](docs/visual-guide.md)** · Le bouton en jaune indique l’action sélectionnée.
+Les captures montrent l’interface anglaise ; **Language / Langue** permet de choisir le français.

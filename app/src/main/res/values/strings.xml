@@ -35,15 +35,18 @@
     <string name="step_test">STEP 3 OF 3 · TRY IT</string>
     <string name="step_done">SETUP COMPLETE</string>
     <string name="connect_title">Connect your TV</string>
-    <string name="connect_intro">Turn on your TV and connect it to the same network as your onn. Choose the TV system below.</string>
+    <string name="connect_intro">Turn on your TV and connect it to the same Wi-Fi or home network as your onn. We’ll look for your TV and identify its system when possible.</string>
     <string name="provider_simple">What kind of TV do you have?</string>
     <string name="help_samsung">Samsung with TizenOS: connect below, then choose Allow on the TV when it asks about onn Volume.</string>
     <string name="help_roku">Roku TV: enable Control by mobile apps in its advanced system settings. Choose this for TCL or Hisense only if the TV runs Roku OS. Experimental.</string>
     <string name="help_sony">Sony BRAVIA: enable IP control on the TV. Enter its pre-shared key below if you set one. This is for compatible BRAVIA TVs, not every Google TV. Experimental.</string>
     <string name="help_upnp">Advanced option: enter a writable RenderingControl endpoint and its port/path. Not every TV supports it. Experimental.</string>
-    <string name="find_tv">Find TVs on my network</string>
+    <string name="find_tv">Find my TV</string>
+    <string name="manual_tv">TV not found? Set up manually</string>
+    <string name="hide_manual_tv">Hide manual TV setup</string>
+    <string name="unknown_tv_title">Check this TV’s system</string>
     <string name="searching">Looking for TVs…</string>
-    <string name="choose_tv">Choose your TV, then Connect</string>
+    <string name="choose_tv">Choose your TV</string>
     <string name="network_tv">Possible TV — check the TV system</string>
     <string name="discovery_empty">No TV advertised itself. This does not mean it is incompatible. Enter the TV address manually, and check that both devices use the same network.</string>
     <string name="address_label">TV address</string>
@@ -94,4 +97,5 @@
     <string name="auto_retry_title">Setup needs your attention</string>
     <string name="auto_retry_help">Check that USB debugging is on and approve the prompt with Always allow. Then retry. If your firmware does not expose local debugging or refuses the setting, use manual setup; the app cannot grant itself this access.</string>
     <string name="language">App language</string>
+    <string name="language_selector" translatable="false">Language / Langue · %1$s</string>
 </resources>

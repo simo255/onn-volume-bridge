@@ -24,7 +24,8 @@ Run JDK 17 / Android SDK 34 checks:
 ./gradlew --no-daemon testReleaseUnitTest lintRelease assembleRelease
 ```
 
-No APKs, keys, IP inventories, local.properties, account information or device
-captures in Git. The Gradle wrapper is build tooling, not a prebuilt app. Keep MIT
+No APKs, keys, IP inventories, local.properties, account information or raw device
+captures in Git. Documentation screenshots must show only the app UI, with no
+addresses, identifiers, credentials or account details. The Gradle wrapper is build tooling, not a prebuilt app. Keep MIT
 notices for derived source. Do not modify a contributor's installed TV as part of
 routine repository work; device deployment needs a specific test scope.

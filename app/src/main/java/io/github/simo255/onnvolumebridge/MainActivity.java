@@ -18,10 +18,10 @@ public final class MainActivity extends Activity {
     private Spinner provider;
     private EditText host,port,psk,path,inputName;
     private TextView status,progress,providerHelp,tvCheck,serviceCheck,readerCheck;
-    private Button save,discover,next,back,advancedToggle;
+    private Button save,discover,next,back,advancedToggle,manualTvToggle;
     private Switch enabled;
     private CheckBox cec;
-    private LinearLayout advanced,sonyFields,upnpFields,footer;
+    private LinearLayout advanced,sonyFields,upnpFields,footer,manualTv;
     private final LinearLayout[] pages=new LinearLayout[4];
     private ScrollView scroll;
     private int step;
@@ -41,16 +41,25 @@ public final class MainActivity extends Activity {
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
         automaticPending=state!=null && state.getBoolean("automatic_pending",false);
+        advancedOpen=state!=null && state.getBoolean("advanced_open",false);
         android.content.SharedPreferences prefs=ConfigStore.prefs(this);
         LinearLayout outer=new LinearLayout(this);outer.setOrientation(LinearLayout.VERTICAL);outer.setBackgroundColor(Color.rgb(14,23,40));
         scroll=new ScrollView(this);scroll.setFillViewport(true);outer.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
         LinearLayout content=new LinearLayout(this);content.setOrientation(LinearLayout.VERTICAL);
         content.setPadding(dp(42),dp(20),dp(42),dp(28));content.setBackgroundColor(Color.rgb(14,23,40));scroll.addView(content);
+        Button language=button(content,R.string.language,v->new AlertDialog.Builder(this)
+            .setTitle(R.string.language)
+            .setSingleChoiceItems(new String[]{"English","Français"},"fr".equals(prefs.getString("ui_language","en"))?1:0,(dialog,position)->{
+                dialog.dismiss();String chosen=position==1?"fr":"en";
+                if(!chosen.equals(prefs.getString("ui_language","en"))){prefs.edit().putString("ui_language",chosen).apply();recreate();}
+            }).setNegativeButton(R.string.cancel,null).show());
+        language.setText(getString(R.string.language_selector,"fr".equals(prefs.getString("ui_language","en"))?"Français":"English"));
         label(content,R.string.title,25);label(content,R.string.summary,16);
         status=label(content,R.string.paused,18);status.setTextColor(Color.rgb(141,198,255));
         progress=label(content,R.string.step_tv,15);
         for(int i=0;i<pages.length;i++){pages[i]=column(content);pages[i].setPadding(0,dp(8),0,dp(8));}
         buildTv(pages[0],prefs);
+        if(state!=null)showManualTv(state.getBoolean("manual_tv",false));
         buildRemote(pages[1],prefs);
         buildTest(pages[2]);
         buildDone(pages[3]);
@@ -61,16 +70,20 @@ public final class MainActivity extends Activity {
         setContentView(outer);
         step=state!=null?state.getInt("setup_step",0):prefs.getBoolean("setup_complete",false)?3:0;
         showStep(step);
-        if(prefs.getBoolean("enabled",false))VolumeRelay.get(this).connect();
+        if(state!=null && state.getBoolean("setup_connection",false))VolumeRelay.get(this).connectForSetup();
+        else if(prefs.getBoolean("enabled",false))VolumeRelay.get(this).connect();
     }
 
     private void buildTv(LinearLayout parent,android.content.SharedPreferences prefs) {
         label(parent,R.string.connect_title,22);label(parent,R.string.connect_intro,17);
+        discover=button(parent,R.string.find_tv,v->discover());
+        tvCheck=label(parent,R.string.tv_not_connected,16);
+        manualTvToggle=button(parent,R.string.manual_tv,v->showManualTv(manualTv.getVisibility()!=View.VISIBLE));
+        manualTv=column(parent);manualTv.setVisibility(View.GONE);parent=manualTv;
         label(parent,R.string.provider_simple,16);provider=new Spinner(this);
         provider.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,getResources().getStringArray(R.array.providers)));
         parent.addView(provider);
         providerHelp=label(parent,R.string.help_samsung,16);
-        discover=button(parent,R.string.find_tv,v->discover());
         label(parent,R.string.address_label,16);host=edit(parent,R.string.host,InputType.TYPE_CLASS_PHONE);
         host.setId(R.id.tv_address);host.setText(prefs.getString("host",""));
         label(parent,R.string.address_help,15);
@@ -82,13 +95,6 @@ public final class MainActivity extends Activity {
         label(advanced,R.string.port,16);port=edit(advanced,R.string.port,InputType.TYPE_CLASS_NUMBER);port.setId(R.id.tv_port);port.setText(Integer.toString(prefs.getInt("port",8002)));
         upnpFields=column(advanced);label(upnpFields,R.string.control_path,16);
         path=edit(upnpFields,R.string.control_path,InputType.TYPE_CLASS_TEXT);path.setId(R.id.control_path_field);path.setText(prefs.getString("control_path","/upnp/control/RenderingControl1"));
-        label(advanced,R.string.language,16);
-        Spinner language=new Spinner(this);language.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,new String[]{"English","Français"}));advanced.addView(language);
-        final int initialLanguage="fr".equals(prefs.getString("ui_language","en"))?1:0;language.setSelection(initialLanguage);
-        language.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-            public void onNothingSelected(AdapterView<?> p) { }
-            public void onItemSelected(AdapterView<?> p,View v,int position,long id){String chosen=position==1?"fr":"en";if(!chosen.equals(prefs.getString("ui_language","en"))){prefs.edit().putString("ui_language",chosen).apply();recreate();}}
-        });
         label(advanced,R.string.input_name,16);inputName=edit(advanced,R.string.input_name,InputType.TYPE_CLASS_TEXT);inputName.setId(R.id.input_name_field);inputName.setText(prefs.getString("input_name",""));
         pin=prefs.getString("cert_pin","");pinHost=prefs.getString("host","");
         int selected;try{selected=TargetConfig.Provider.valueOf(prefs.getString("provider","SAMSUNG")).ordinal();}catch(RuntimeException ignored){selected=0;}
@@ -101,7 +107,11 @@ public final class MainActivity extends Activity {
         });
         updateProvider(false);
         save=button(parent,R.string.save,v->save());
-        tvCheck=label(parent,R.string.tv_not_connected,16);
+    }
+
+    private void showManualTv(boolean show) {
+        manualTv.setVisibility(show?View.VISIBLE:View.GONE);
+        manualTvToggle.setText(show?R.string.hide_manual_tv:R.string.manual_tv);
     }
 
     private void updateProvider(boolean changed) {
@@ -243,13 +253,28 @@ public final class MainActivity extends Activity {
             handler.post(()->{
                 if(isFinishing() || isDestroyed())return;
                 discover.setEnabled(true);discover.setText(R.string.find_tv);
-                if(found.isEmpty()){new AlertDialog.Builder(this).setTitle(R.string.find_tv).setMessage(R.string.discovery_empty).setPositiveButton(android.R.string.ok,null).show();return;}
+                if(found.isEmpty()){new AlertDialog.Builder(this).setTitle(R.string.find_tv).setMessage(R.string.discovery_empty)
+                    .setPositiveButton(R.string.manual_tv,(dialog,which)->showManualTv(true)).setNegativeButton(R.string.cancel,null).show();return;}
                 String[] names=new String[found.size()];String[] brands=getResources().getStringArray(R.array.providers);
                 for(int i=0;i<found.size();i++){TvDiscovery.Candidate c=found.get(i);names[i]=(c.provider==null?getString(R.string.network_tv):brands[c.provider.ordinal()])+" — "+c.host;}
                 new AlertDialog.Builder(this).setTitle(R.string.choose_tv).setItems(names,(dialog,index)->{
-                    TvDiscovery.Candidate c=found.get(index);if(c.provider!=null)provider.setSelection(c.provider.ordinal());host.setText(c.host);handler.post(this::save);
+                    TvDiscovery.Candidate c=found.get(index);
+                    if(c.provider!=null)selectDiscoveredTv(c,c.provider);
+                    else new AlertDialog.Builder(this).setTitle(R.string.unknown_tv_title)
+                        .setItems(R.array.providers,(d,choice)->selectDiscoveredTv(c,TargetConfig.Provider.values()[choice]))
+                        .setNegativeButton(R.string.cancel,null).show();
                 }).setNegativeButton(R.string.cancel,null).show();
             });
+        });
+    }
+
+    private void selectDiscoveredTv(TvDiscovery.Candidate candidate,TargetConfig.Provider type) {
+        provider.setSelection(type.ordinal());host.setText(candidate.host);
+        // Wait for the spinner's provider-change callback before applying the default port.
+        handler.post(()->{
+            port.setText(type==TargetConfig.Provider.SAMSUNG?"8002":type==TargetConfig.Provider.ROKU?"8060":type==TargetConfig.Provider.SONY?"80":"9197");
+            if(type==TargetConfig.Provider.SONY || type==TargetConfig.Provider.UPNP)showManualTv(true);
+            else save();
         });
     }
 
@@ -272,7 +297,7 @@ public final class MainActivity extends Activity {
         try {
             TargetConfig config=new TargetConfig(type,address,pin,psk.getText().toString(),Integer.parseInt(port.getText().toString()),path.getText().toString(),inputName.getText().toString());
             ConfigStore.save(this,config);ConfigStore.prefs(this).edit().putBoolean("setup_complete",false).apply();
-            VolumeRelay.get(this).disconnect();VolumeRelay.get(this).connect();advanceTvWhenReady=step==0;toast(R.string.saved);refreshState();
+            VolumeRelay.get(this).disconnect();VolumeRelay.get(this).connectForSetup();advanceTvWhenReady=step==0;toast(R.string.saved);refreshState();
         }catch(RuntimeException e){toast(R.string.bad_config);}
     }
     private void test(VolumeKey key) {
@@ -290,10 +315,10 @@ public final class MainActivity extends Activity {
     private LinearLayout column(LinearLayout parent){LinearLayout v=new LinearLayout(this);v.setOrientation(LinearLayout.VERTICAL);parent.addView(v);return v;}
     private TextView label(LinearLayout parent,int text,int size){TextView v=new TextView(this);v.setText(text);v.setTextSize(size);v.setTextColor(Color.WHITE);v.setPadding(0,dp(5),0,dp(5));parent.addView(v);return v;}
     private EditText edit(LinearLayout parent,int hint,int type){EditText v=new EditText(this);v.setHint(hint);v.setInputType(type);v.setSingleLine(true);v.setTextColor(Color.WHITE);v.setHintTextColor(Color.LTGRAY);v.setTextSize(18);v.setMinHeight(dp(48));parent.addView(v);return v;}
-    private Button button(LinearLayout parent,int text,View.OnClickListener click){Button v=new Button(this);v.setText(text);v.setTextSize(16);v.setMinHeight(dp(48));v.setOnClickListener(click);parent.addView(v);return v;}
+    private Button button(LinearLayout parent,int text,View.OnClickListener click){Button v=new Button(this);v.setText(text);v.setTextSize(16);v.setMinHeight(dp(48));v.setBackgroundTintList(getColorStateList(R.color.button_background));v.setTextColor(getColorStateList(R.color.button_text));v.setOnClickListener(click);parent.addView(v);return v;}
     @Override public void onBackPressed(){if(step>0 && step<3)showStep(step-1);else super.onBackPressed();}
-    @Override protected void onSaveInstanceState(Bundle out){out.putBoolean("automatic_pending",automaticPending);out.putInt("setup_step",step);super.onSaveInstanceState(out);}
+    @Override protected void onSaveInstanceState(Bundle out){out.putBoolean("automatic_pending",automaticPending);out.putInt("setup_step",step);out.putBoolean("setup_connection",VolumeRelay.get(this).setupConnectionRequested());out.putBoolean("manual_tv",manualTv.getVisibility()==View.VISIBLE);out.putBoolean("advanced_open",advancedOpen);super.onSaveInstanceState(out);}
     @Override protected void onResume(){super.onResume();handler.removeCallbacks(refresh);handler.post(refresh);if(automaticPending && !automaticBusy && Settings.Global.getInt(getContentResolver(),Settings.Global.ADB_ENABLED,0)!=0)automaticSetup();}
     @Override protected void onPause(){handler.removeCallbacks(refresh);super.onPause();}
-    @Override protected void onDestroy(){LocalAdbVolumeKeys.get(this).cancelSetup();worker.shutdownNow();handler.removeCallbacksAndMessages(null);super.onDestroy();}
+    @Override protected void onDestroy(){LocalAdbVolumeKeys.get(this).cancelSetup();VolumeRelay.get(this).finishSetupConnection();worker.shutdownNow();handler.removeCallbacksAndMessages(null);super.onDestroy();}
 }

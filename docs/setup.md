@@ -2,8 +2,8 @@
 
 ## Download
 
-Download [onn-volume-bridge-v0.2.0.apk](https://github.com/simo255/onn-volume-bridge/releases/download/v0.2.0/onn-volume-bridge-v0.2.0.apk)
-from the [v0.2.0 preview release](https://github.com/simo255/onn-volume-bridge/releases/tag/v0.2.0).
+Download [onn-volume-bridge-v0.2.1.apk](https://github.com/simo255/onn-volume-bridge/releases/download/v0.2.1/onn-volume-bridge-v0.2.1.apk)
+from the [v0.2.1 preview release](https://github.com/simo255/onn-volume-bridge/releases/tag/v0.2.1).
 The release includes SHA-256 checksums and the signing certificate fingerprint.
 Android TV 8.0 or newer is required. This is an early public preview; see
 [compatibility](compatibility.md) before installing.
@@ -18,12 +18,17 @@ identity preserves saved pairing. The package is `io.github.simo255.onnvolumebri
 
 ## The short setup flow
 
-The app opens in English by default, even when Android is in another language.
-French is available under **Advanced options → App language**.
+Prefer pictures? **[Follow the screenshot guide](visual-guide.md)** for the three setup steps and ready screen.
 
-1. **Connect your TV.** Choose its system, then **Find TVs on my network** and
-   select your TV. Connection starts after selection. If discovery finds nothing,
-   enter the TV address from its network settings and choose **Save and connect**.
+The app opens in English by default, even when Android is in another language.
+Choose English or French with **Language / Langue** at the top of the app, before setup.
+
+1. **Connect your TV.** Select **Find my TV**, then choose your TV from the results.
+   The app identifies its system when advertised; Samsung and Roku connection starts
+   after selection. Unknown systems require an explicit choice. Sony opens its
+   settings for the optional key, and UPnP requires manual endpoint configuration.
+   If discovery finds nothing, choose **TV not found? Set up manually**, select the
+   system, enter the TV address from its network settings and choose **Save and connect**.
    Samsung requires certificate trust and **Allow** on the TV itself. Sony may
    need its IP-control pre-shared key. Roku TV requires Control by mobile apps.
 2. Choose **Set up my remote automatically**. If USB debugging is off, the app
