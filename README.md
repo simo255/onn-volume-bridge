@@ -18,6 +18,10 @@ Short link: [aftv.news/3237729](https://aftv.news/3237729).
 are still experimental. Feedback and [compatibility reports](https://github.com/simo255/onn-volume-bridge/issues/new?template=compatibility.md)
 are appreciated**, including what works and what needs fixing. Please omit private addresses, credentials and raw logs.
 
+Found an issue? **[Report it on GitHub](https://github.com/simo255/onn-volume-bridge/issues/new)**
+so I can take a look. Include your onn model, TV model/OS, app version, what happened
+and what you expected. Keep private addresses, credentials and raw logs out of the report.
+
 Install on your onn, choose your TV from **Find my TV**, then select
 **Set up my remote automatically**. Approve the Android prompts and try the remote.
 The app handles its own accessibility setup after local debugging approval and

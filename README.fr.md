@@ -40,6 +40,11 @@ Lien court : [aftv.news/3237729](https://aftv.news/3237729).
 Les autres adaptateurs TV restent expérimentaux. Tous vos retours et [rapports de compatibilité](https://github.com/simo255/onn-volume-bridge/issues/new?template=compatibility.md)
 sont appréciés**, que cela fonctionne ou non. Ne partagez pas d’adresses privées, d’identifiants ou de journaux bruts.
 
+Un problème ? **[Signalez-le sur GitHub](https://github.com/simo255/onn-volume-bridge/issues/new)**
+pour que je puisse regarder. Indiquez le modèle de votre onn, le modèle/système de
+la télé, la version de l’app, ce qui s’est passé et le résultat attendu.
+Ne partagez pas d’adresses privées, d’identifiants ou de journaux bruts.
+
 Installez l’APK sur la onn, choisissez votre télé dans **Find my TV**,
 puis **Set up my remote automatically**. Autorisez les demandes Android et testez
 la vraie télécommande. L’app active son service de volume après votre autorisation
