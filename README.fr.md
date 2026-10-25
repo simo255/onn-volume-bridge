@@ -32,6 +32,10 @@ comme disponibles dans cette première version.
 
 **[Télécharger l’APK — aperçu v0.2.2](https://github.com/simo255/onn-volume-bridge/releases/download/v0.2.2/onn-volume-bridge-v0.2.2.apk)** · [Notes et sommes de contrôle](https://github.com/simo255/onn-volume-bridge/releases/tag/v0.2.2)
 
+**Installation facile :** installez [Downloader by AFTVnews](https://play.google.com/store/apps/details?id=com.esaba.downloader)
+sur la onn et saisissez **`3586297`**. Ce code télécharge la **v0.2.2** depuis GitHub.
+Lien court : [aftv.news/3586297](https://aftv.news/3586297).
+
 **Samsung/TizenOS est le seul environnement ayant des vérifications matérielles consignées.
 Les autres adaptateurs TV restent expérimentaux. Tous vos retours et [rapports de compatibilité](https://github.com/simo255/onn-volume-bridge/issues/new?template=compatibility.md)
 sont appréciés**, que cela fonctionne ou non. Ne partagez pas d’adresses privées, d’identifiants ou de journaux bruts.

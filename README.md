@@ -10,6 +10,10 @@ local network only, no cloud accounts, no root, and no launcher replacement.
 
 **[Download the APK — v0.2.2 preview](https://github.com/simo255/onn-volume-bridge/releases/download/v0.2.2/onn-volume-bridge-v0.2.2.apk)** · [Release notes and checksums](https://github.com/simo255/onn-volume-bridge/releases/tag/v0.2.2)
 
+**Easy install:** install [Downloader by AFTVnews](https://play.google.com/store/apps/details?id=com.esaba.downloader)
+on your onn and enter **`3586297`**. This code downloads **v0.2.2** from GitHub.
+Short link: [aftv.news/3586297](https://aftv.news/3586297).
+
 **Samsung/TizenOS is the only setup with recorded hardware checks. Other TV adapters
 are still experimental. Feedback and [compatibility reports](https://github.com/simo255/onn-volume-bridge/issues/new?template=compatibility.md)
 are appreciated**, including what works and what needs fixing. Please omit private addresses, credentials and raw logs.

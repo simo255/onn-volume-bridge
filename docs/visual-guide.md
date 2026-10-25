@@ -1,6 +1,10 @@
 # Set up in three steps
 
-Install the [v0.2.2 preview APK](https://github.com/simo255/onn-volume-bridge/releases/download/v0.2.2/onn-volume-bridge-v0.2.2.apk)
+For the easiest remote-only install, use **Downloader by AFTVnews** on the onn and
+enter **`3586297`**. This code points to the official v0.2.2 APK on GitHub.
+See [installation instructions](setup.md#download) if Android asks for permission.
+
+Or install the [v0.2.2 preview APK](https://github.com/simo255/onn-volume-bridge/releases/download/v0.2.2/onn-volume-bridge-v0.2.2.apk)
 on your onn and open **onn Volume Bridge**. Keep your TV on and connected to the
 same Wi-Fi or home network. Use this bridge when normal CEC volume setup fails.
 
